@@ -1,0 +1,211 @@
+openapi: 3.0.0
+info:
+  title: Smart Property Management API
+  version: 1.0.0
+  description: API documentation for Smart Property Management system.
+servers:
+  - url: http://localhost:3001/api/v1
+    description: Local development server
+paths:
+  /auth/login:
+    post:
+      summary: User Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSessionResponse'
+
+  /auth/register:
+    post:
+      summary: Register new user/workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterPayload'
+      responses:
+        '200':
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSessionResponse'
+
+  /auth/me:
+    get:
+      summary: Get current authenticated user
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      responses:
+        '200':
+          description: Session refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSessionResponse'
+
+  /auth/logout:
+    post:
+      summary: Logout user
+      responses:
+        '200':
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      revoked:
+                        type: boolean
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    UserRole:
+      type: string
+      enum: [super_admin, manager, accountant, staff, resident]
+    Workspace:
+      type: object
+      required:
+        - id
+        - name
+        - slug
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        logoUrl:
+          type: string
+    AuthUser:
+      type: object
+      required:
+        - id
+        - email
+        - role
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          $ref: '#/components/schemas/UserRole'
+        fullName:
+          type: string
+        avatarUrl:
+          type: string
+        workspace:
+          $ref: '#/components/schemas/Workspace'
+        building:
+          type: string
+          nullable: true
+        apartment:
+          type: string
+          nullable: true
+    AuthSession:
+      type: object
+      required:
+        - user
+        - token
+      properties:
+        user:
+          $ref: '#/components/schemas/AuthUser'
+        token:
+          type: string
+    AuthSessionResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/AuthSession'
+    UserResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/AuthUser'
+    RegisterPayload:
+      type: object
+      required:
+        - email
+        - password
+        - fullName
+        - role
+        - workspaceName
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        fullName:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [manager, resident]
+        workspaceName:
+          type: string
+        building:
+          type: string
+        apartment:
+          type: string

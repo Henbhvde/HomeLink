@@ -1,0 +1,545 @@
+{
+  "version": 1,
+  "platformTenants": [
+    {
+      "id": "evergreen",
+      "name": "Evergreen Residence",
+      "contactName": "Б. Энхтөр",
+      "contactEmail": "manager@evergreen.mn",
+      "location": "ХУД, Улаанбаатар",
+      "plan": "Growth",
+      "status": "active",
+      "unitCount": 436,
+      "monthlyPrice": 199000,
+      "createdAt": "2026-04-10"
+    },
+    {
+      "id": "blue-sky",
+      "name": "Blue Sky Residence",
+      "contactName": "Д. Мөнхөө",
+      "contactEmail": "admin@bluesky.mn",
+      "location": "БЗД, Улаанбаатар",
+      "plan": "Enterprise",
+      "status": "active",
+      "unitCount": 920,
+      "monthlyPrice": 690000,
+      "createdAt": "2026-02-18"
+    },
+    {
+      "id": "river-garden",
+      "name": "River Garden",
+      "contactName": "Н. Ариунболд",
+      "contactEmail": "office@rivergarden.mn",
+      "location": "ХУД, Улаанбаатар",
+      "plan": "Growth",
+      "status": "trial",
+      "unitCount": 280,
+      "monthlyPrice": 199000,
+      "createdAt": "2026-07-12",
+      "trialEndsAt": "2026-08-11"
+    },
+    {
+      "id": "park-view",
+      "name": "Park View",
+      "contactName": "Г. Тэмүүлэн",
+      "contactEmail": "manager@parkview.mn",
+      "location": "СБД, Улаанбаатар",
+      "plan": "Growth",
+      "status": "active",
+      "unitCount": 72,
+      "monthlyPrice": 199000,
+      "createdAt": "2025-11-03"
+    },
+    {
+      "id": "khurkhree",
+      "name": "Хүрхрээ хотхон",
+      "contactName": "Б. Гэрэл",
+      "contactEmail": "manager@khurkhree.mn",
+      "location": "БГД, Улаанбаатар",
+      "plan": "Growth",
+      "status": "read_only",
+      "unitCount": 196,
+      "monthlyPrice": 199000,
+      "createdAt": "2025-12-19",
+      "pastDueSince": "2026-05-10"
+    },
+    {
+      "id": "request-1",
+      "name": "Цэнгэлдэх хотхон",
+      "contactName": "Д. Энхжин",
+      "contactEmail": "d.enkhjin@tsengeldekh.mn",
+      "location": "ХУД, Улаанбаатар",
+      "plan": "Growth",
+      "status": "trial",
+      "unitCount": 312,
+      "monthlyPrice": 199000,
+      "createdAt": "2026-07-24",
+      "trialEndsAt": "2026-08-11"
+    },
+    {
+      "id": "request-2",
+      "name": "Нарлаг өргөө СӨХ",
+      "contactName": "Б. Тэмүүлэн",
+      "contactEmail": "b.temuulen@narlag.mn",
+      "location": "БЗД, Улаанбаатар",
+      "plan": "Start",
+      "status": "active",
+      "unitCount": 148,
+      "monthlyPrice": 0,
+      "createdAt": "2026-07-23"
+    },
+    {
+      "id": "request-3",
+      "name": "Khunnu 2222 Residence",
+      "contactName": "С. Марал",
+      "contactEmail": "s.maral@khunnu.mn",
+      "location": "ХУД, Улаанбаатар",
+      "plan": "Enterprise",
+      "status": "trial",
+      "unitCount": 504,
+      "monthlyPrice": 690000,
+      "createdAt": "2026-07-22",
+      "trialEndsAt": "2026-08-11"
+    },
+    {
+      "id": "cmsilqk1m0009m3y3f7nvotmx",
+      "name": "hehe suh",
+      "contactName": "hahaha@gmail.com",
+      "contactEmail": "hahaha@gmail.com",
+      "location": "han uul hothon 4r horoo",
+      "plan": "Start",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 0,
+      "createdAt": "2026-08-07"
+    },
+    {
+      "id": "cmsilrkic000am3y3urdqptgy",
+      "name": "hehe suh",
+      "contactName": "hahaha@gmail.com",
+      "contactEmail": "hahaha@gmail.com",
+      "location": "han uul duureg 4r horoo",
+      "plan": "Start",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 0,
+      "createdAt": "2026-08-07"
+    },
+    {
+      "id": "cmsim35wh000dm3y3ryqazyf6",
+      "name": "hehe suh",
+      "contactName": "ihvemee@gmail.com",
+      "contactEmail": "ihvemee@gmail.com",
+      "location": "han uul duureg 4r horoo",
+      "plan": "Start",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 0,
+      "createdAt": "2026-08-07"
+    },
+    {
+      "id": "cmsjyneli0002irt3zxil0fig",
+      "name": "lol suh",
+      "contactName": "yla@gmail.com",
+      "contactEmail": "yla@gmail.com",
+      "location": "Han uul duureg",
+      "plan": "Start",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 0,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsjzv4w60004bi9jhykuam2z",
+      "name": "suul suh",
+      "contactName": "suu@gmail.com",
+      "contactEmail": "suu@gmail.com",
+      "location": "Han uul duureg",
+      "plan": "Enterprise",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 299000,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsjzvawg0005bi9jcxs0c7rq",
+      "name": "suul suh",
+      "contactName": "suu@gmail.com",
+      "contactEmail": "suu@gmail.com",
+      "location": "Han uul duureg",
+      "plan": "Enterprise",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 299000,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsk0jpb100045ue4k5k7y7fw",
+      "name": "ee suh",
+      "contactName": "ee@gmail.com",
+      "contactEmail": "ee@gmail.com",
+      "location": "Han uul",
+      "plan": "Enterprise",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 299000,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsk0p1hi0002106adswm8mru",
+      "name": "ss suh",
+      "contactName": "ss@gmail.com",
+      "contactEmail": "ss@gmail.com",
+      "location": "han uul duureg",
+      "plan": "Enterprise",
+      "status": "active",
+      "unitCount": 0,
+      "monthlyPrice": 299000,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsk0qtme0008106autotu2am",
+      "name": "sns",
+      "contactName": "sns@gmail.com",
+      "contactEmail": "sns@gmail.com",
+      "location": "han uul",
+      "plan": "Growth",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 149000,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsk1fj8m000e106aetzank1z",
+      "name": "suh",
+      "contactName": "suh@gmail.com",
+      "contactEmail": "suh@gmail.com",
+      "location": "han uu",
+      "plan": "Enterprise",
+      "status": "active",
+      "unitCount": 0,
+      "monthlyPrice": 299000,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsk1mmg600059m981ade8bx9",
+      "name": "suh",
+      "contactName": "gnn@gmail.com",
+      "contactEmail": "gnn@gmail.com",
+      "location": "han uul",
+      "plan": "Start",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 49000,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsk31oi30002bkx87ezgbmtj",
+      "name": "bilegt suh",
+      "contactName": "bilegt@gmail.com",
+      "contactEmail": "bilegt@gmail.com",
+      "location": "han uul duureg",
+      "plan": "Start",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 49000,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsk3cg8n000dbkx8s4ud8ban",
+      "name": "nar suh",
+      "contactName": "nar@gmail.com",
+      "contactEmail": "nar@gmail.com",
+      "location": "han uul duureg",
+      "plan": "Growth",
+      "status": "pending",
+      "unitCount": 0,
+      "monthlyPrice": 149000,
+      "createdAt": "2026-08-08"
+    },
+    {
+      "id": "cmsk49f4k000ibkx8cze9cpav",
+      "name": "ss",
+      "contactName": "hmm@gmail.com",
+      "contactEmail": "hmm@gmail.com",
+      "location": "ss",
+      "plan": "Growth",
+      "status": "active",
+      "unitCount": 0,
+      "monthlyPrice": 149000,
+      "createdAt": "2026-08-08"
+    }
+  ],
+  "scopes": {
+    "manager-buildings": [
+      {
+        "id": "A",
+        "name": "A байр",
+        "code": "A",
+        "entrances": 2,
+        "floors": 12,
+        "apartments": 120,
+        "detail": "Хойд блок",
+        "status": "Идэвхтэй"
+      },
+      {
+        "id": "B",
+        "name": "B байр",
+        "code": "B",
+        "entrances": 2,
+        "floors": 10,
+        "apartments": 96,
+        "detail": "Төв блок",
+        "status": "Идэвхтэй"
+      },
+      {
+        "id": "C",
+        "name": "C байр",
+        "code": "C",
+        "entrances": 3,
+        "floors": 14,
+        "apartments": 148,
+        "detail": "Өмнөд блок",
+        "status": "Идэвхтэй"
+      },
+      {
+        "id": "D",
+        "name": "D байр",
+        "code": "D",
+        "entrances": 1,
+        "floors": 8,
+        "apartments": 72,
+        "detail": "Зүүн блок",
+        "status": "Тохиргоо дутуу"
+      }
+    ],
+    "cms4avumf0000xj9aqn8ndv9c:manager-residents": [],
+    "cms4avumf0000xj9aqn8ndv9c:payment-statements": [],
+    "cms4avumf0000xj9aqn8ndv9c:resident-service-tickets": [
+      {
+        "id": "#245",
+        "title": "Угаалгын өрөөний шугам",
+        "detail": "Усны гоожилт үргэлжилж байна.",
+        "category": "Сантехник",
+        "createdAt": "Өнөөдөр, 10:40",
+        "status": "inProgress",
+        "hasPhoto": true,
+        "tenantId": "cms4avumf0000xj9aqn8ndv9c"
+      },
+      {
+        "id": "#236",
+        "title": "4-р давхрын гэрэлтүүлэг",
+        "detail": "Орцны шатны гэрэл солигдсон.",
+        "category": "Нийтийн талбай",
+        "createdAt": "07.16",
+        "status": "done",
+        "tenantId": "cms4avumf0000xj9aqn8ndv9c"
+      }
+    ],
+    "cms4avumf0000xj9aqn8ndv9c:resident-community-notices": [
+      {
+        "id": 1,
+        "title": "Ус түр хаах мэдэгдэл",
+        "audience": "B орц · 1–12 давхар",
+        "date": "Маргааш, 10:00–14:00",
+        "body": "Шугамын урсгал засварын улмаас маргааш 10:00–14:00 цагийн хооронд B орцны ус түр хаагдана. Усны хэрэгцээгээ урьдчилан базаана уу.",
+        "read": false,
+        "kind": "service",
+        "tenantId": "cms4avumf0000xj9aqn8ndv9c"
+      },
+      {
+        "id": 2,
+        "title": "7-р сарын нэхэмжлэл гарлаа",
+        "audience": "Бүх оршин суугч",
+        "date": "Өнөөдөр, 09:00",
+        "body": "7-р сарын СӨХ-ийн үйлчилгээ, усны хэрэглээ болон алдангийн нэхэмжлэл таны порталд байршууллаа.",
+        "read": false,
+        "kind": "finance",
+        "tenantId": "cms4avumf0000xj9aqn8ndv9c"
+      },
+      {
+        "id": 3,
+        "title": "Сарын ил тод тайлан нээгдлээ",
+        "audience": "Бүх оршин суугч",
+        "date": "07.20",
+        "body": "6-р сарын СӨХ-ийн орлого, зарлагын нэгтгэсэн тайланг оршин суугчдад нээлттэй болголоо.",
+        "read": true,
+        "kind": "community",
+        "tenantId": "cms4avumf0000xj9aqn8ndv9c"
+      }
+    ],
+    "cms4avumf0000xj9aqn8ndv9c:expense-records": [],
+    "cms4avumf0000xj9aqn8ndv9c:staff-work-orders": [
+      {
+        "id": "REQ-245",
+        "title": "Угаалгын өрөөний ус гоожиж байна",
+        "unit": "A-0045",
+        "place": "A байр · 4-р давхар",
+        "priority": "Яаралтай",
+        "createdAt": "Өнөөдөр, 10:24",
+        "status": "in_progress",
+        "description": "Угаалгын өрөөний доод шугамнаас ус дусалж байна. Яаралтай шалгаж өгнө үү.",
+        "image": "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=900&q=82",
+        "tenantId": "cms4avumf0000xj9aqn8ndv9c"
+      },
+      {
+        "id": "REQ-238",
+        "title": "Гал тогооны усны цорго сул",
+        "unit": "B-0801",
+        "place": "B байр · 8-р давхар",
+        "priority": "Дунд",
+        "createdAt": "Өчигдөр, 16:40",
+        "status": "in_progress",
+        "description": "Цоргоны суурь сулраад ус бага зэрэг нэвчиж байна.",
+        "image": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=82",
+        "tenantId": "cms4avumf0000xj9aqn8ndv9c"
+      }
+    ],
+    "onboarding-stripe-checkout:cmsk0p1hi0002106adswm8mru": {
+      "tenantId": "cmsk0p1hi0002106adswm8mru",
+      "amount": 299000,
+      "stripeSessionId": "cs_test_local_4f3f67d3-d5fa-4a25-aba3-94fcfc1b7e03",
+      "checkoutUrl": "",
+      "localTest": true,
+      "createdAt": "2026-08-08T06:53:27.434Z",
+      "status": "paid",
+      "paymentId": "pi_test_local_5cd7cccb-e260-4d3f-83ed-ad80921c9eb2",
+      "paidAt": "2026-08-08T06:53:37.912Z"
+    },
+    "onboarding-stripe-checkout:cmsk0qtme0008106autotu2am": {
+      "tenantId": "cmsk0qtme0008106autotu2am",
+      "amount": 149000,
+      "stripeSessionId": "cs_test_local_04426f19-f8dd-4630-adc8-34d608a3e72e",
+      "checkoutUrl": "",
+      "localTest": true,
+      "createdAt": "2026-08-08T06:54:50.603Z",
+      "status": "pending"
+    },
+    "onboarding-stripe-checkout:cmsk1fj8m000e106aetzank1z": {
+      "tenantId": "cmsk1fj8m000e106aetzank1z",
+      "amount": 299000,
+      "stripeSessionId": "cs_test_local_b8ba7128-a146-48f0-9c0f-38bdd093ff73",
+      "checkoutUrl": "",
+      "localTest": true,
+      "createdAt": "2026-08-08T07:14:03.553Z",
+      "status": "paid",
+      "paymentId": "pi_test_local_a6be0f4a-35d0-4695-9456-c6973e23387d",
+      "paidAt": "2026-08-08T07:18:32.203Z"
+    },
+    "onboarding-stripe-checkout:cmsk1mmg600059m981ade8bx9": {
+      "tenantId": "cmsk1mmg600059m981ade8bx9",
+      "amount": 49000,
+      "stripeSessionId": "cs_test_a1CPGgrxy018Mr3JDWXMeVaTp2BfLJCXvWLllFhhjcfBqNsc8g2skWFGOO",
+      "checkoutUrl": "https://checkout.stripe.com/c/pay/cs_test_a1CPGgrxy018Mr3JDWXMeVaTp2BfLJCXvWLllFhhjcfBqNsc8g2skWFGOO#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRQNzFNfU1CRHR2VTdDRnFVMEJKRjNfY29UY0I2RD1PRHRAQHA2f0J2a2lAMnI1S11kaHZzcnJGTEJ2aXBKQFYzRHZEfFBgaGtrUlNWXXdfaUJddjRqX381NXxmcTwzaGBMJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "createdAt": "2026-08-08T07:19:36.077Z",
+      "status": "pending"
+    },
+    "onboarding-stripe-checkout:cmsk31oi30002bkx87ezgbmtj": {
+      "tenantId": "cmsk31oi30002bkx87ezgbmtj",
+      "amount": 49000,
+      "stripeSessionId": "cs_test_a1jOXFqobHBKJrO3SzyQKKwRziaQrfGlOCKpJGgp5aQmFkFZh47CKeZJCB",
+      "checkoutUrl": "https://checkout.stripe.com/c/pay/cs_test_a1jOXFqobHBKJrO3SzyQKKwRziaQrfGlOCKpJGgp5aQmFkFZh47CKeZJCB#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRQNzFNfU1CRHR2VTdDRnFVMEJKRjNfY29UY0I2RD1PRHRAQHA2f0J2a2lAMnI1S11kaHZzcnJGTEJ2aXBKQFYzRHZEfFBgaGtrUlNWXXdfaUJddjRqX381NXxmcTwzaGBMJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "createdAt": "2026-08-08T07:59:17.302Z",
+      "status": "pending"
+    },
+    "onboarding-stripe-checkout:cmsk3cg8n000dbkx8s4ud8ban": {
+      "tenantId": "cmsk3cg8n000dbkx8s4ud8ban",
+      "amount": 149000,
+      "stripeSessionId": "cs_test_a1NWlSGGa9lQHWSOmjjMb7KlWpTBwvDDMeqxqTN2KHyvc2ldCFJ1AyYvu2",
+      "checkoutUrl": "https://checkout.stripe.com/c/pay/cs_test_a1NWlSGGa9lQHWSOmjjMb7KlWpTBwvDDMeqxqTN2KHyvc2ldCFJ1AyYvu2#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRQNzFNfU1CRHR2VTdDRnFVMEJKRjNfY29UY0I2RD1PRHRAQHA2f0J2a2lAMnI1S11kaHZzcnJGTEJ2aXBKQFYzRHZEfFBgaGtrUlNWXXdfaUJddjRqX381NXxmcTwzaGBMJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "createdAt": "2026-08-08T08:07:39.770Z",
+      "status": "pending"
+    },
+    "onboarding-stripe-checkout:cmsk49f4k000ibkx8cze9cpav": {
+      "tenantId": "cmsk49f4k000ibkx8cze9cpav",
+      "amount": 149000,
+      "stripeSessionId": "cs_test_a1u4KdjcTTsYTUI7zGGq1OkosIstE12Xse6dOAwycg7Cf8Z9lk6KE7ZUmr",
+      "checkoutUrl": "https://checkout.stripe.com/c/pay/cs_test_a1u4KdjcTTsYTUI7zGGq1OkosIstE12Xse6dOAwycg7Cf8Z9lk6KE7ZUmr#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRQNzFNfU1CRHR2VTdDRnFVMEJKRjNfY29UY0I2RD1PRHRAQHA2f0J2a2lAMnI1S11kaHZzcnJGTEJ2aXBKQFYzRHZEfFBgaGtrUlNWXXdfaUJddjRqX381NXxmcTwzaGBMJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+      "createdAt": "2026-08-08T08:33:17.943Z",
+      "status": "paid",
+      "paymentId": "cmsk4lfre000113xlqx4bldbn",
+      "paidAt": "2026-08-08T08:42:38.504Z"
+    },
+    "cmsk49f4k000ibkx8cze9cpav:manager-residents": [
+      {
+        "id": "local-1786180000801",
+        "name": "Bilegt",
+        "phone": "12345678",
+        "email": "bilegt@gmail.com",
+        "apartment": "7",
+        "type": "Оршин суугч",
+        "status": "Урилга илгээсэн",
+        "initials": "B",
+        "tenantId": "cmsk49f4k000ibkx8cze9cpav"
+      }
+    ],
+    "cmsk1fj8m000e106aetzank1z:manager-residents": [
+      {
+        "id": "cmslj87yg0004fdtmzmqo548k",
+        "tenantId": "cmsk1fj8m000e106aetzank1z",
+        "name": "Dulmaa",
+        "apartment": "request-cmslj87yg0004fdtmzmqo548k-12",
+        "phone": "80510464",
+        "email": "aaaahehe06@gmail.com",
+        "type": "Оршин суугч",
+        "status": "Идэвхтэй",
+        "initials": "D"
+      },
+      {
+        "id": "local-1786268943949",
+        "name": "Bold",
+        "phone": "99999999",
+        "email": "maraljingoo44xe.moes.edu.mn",
+        "apartment": "San technic",
+        "type": "Ажилтан",
+        "status": "Идэвхтэй",
+        "initials": "B",
+        "tenantId": "cmsk1fj8m000e106aetzank1z"
+      },
+      {
+        "id": "local-1786271395354",
+        "name": "Bat erdene",
+        "phone": "12345678",
+        "email": "maraljingoo44xe@moes.edu.mn",
+        "apartment": "san",
+        "type": "Ажилтан",
+        "status": "Урилга илгээсэн",
+        "initials": "BE",
+        "tenantId": "cmsk1fj8m000e106aetzank1z"
+      }
+    ],
+    "cmsk1fj8m000e106aetzank1z:resident-community-notices": [
+      {
+        "id": 1,
+        "title": "Ус түр хаах мэдэгдэл",
+        "audience": "B орц · 1–12 давхар",
+        "date": "Маргааш, 10:00–14:00",
+        "body": "Шугамын урсгал засварын улмаас маргааш 10:00–14:00 цагийн хооронд B орцны ус түр хаагдана. Усны хэрэгцээгээ урьдчилан базаана уу.",
+        "read": true,
+        "kind": "service",
+        "tenantId": "cmsk1fj8m000e106aetzank1z"
+      },
+      {
+        "id": 2,
+        "title": "7-р сарын нэхэмжлэл гарлаа",
+        "audience": "Бүх оршин суугч",
+        "date": "Өнөөдөр, 09:00",
+        "body": "7-р сарын СӨХ-ийн үйлчилгээ, усны хэрэглээ болон алдангийн нэхэмжлэл таны порталд байршууллаа.",
+        "read": false,
+        "kind": "finance",
+        "tenantId": "cmsk1fj8m000e106aetzank1z"
+      },
+      {
+        "id": 3,
+        "title": "Сарын ил тод тайлан нээгдлээ",
+        "audience": "Бүх оршин суугч",
+        "date": "07.20",
+        "body": "6-р сарын СӨХ-ийн орлого, зарлагын нэгтгэсэн тайланг оршин суугчдад нээлттэй болголоо.",
+        "read": true,
+        "kind": "community",
+        "tenantId": "cmsk1fj8m000e106aetzank1z"
+      }
+    ],
+    "cms4bile8000110m748apcx2x:payment-statements": []
+  }
+}

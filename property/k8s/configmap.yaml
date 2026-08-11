@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: homelink-config }
+data:
+  NODE_ENV: production
+  PORT: "3001"
+  FRONTEND_URLS: https://app.example.com
+  API_PUBLIC_URL: https://app.example.com
+  OTP_EMAIL_PROVIDER_URL: https://provider.example.com/email
+  NOTIFICATION_EMAIL_PROVIDER_URL: https://provider.example.com/email
+  NOTIFICATION_SMS_PROVIDER_URL: https://provider.example.com/sms
+  S3_ENDPOINT: https://s3.example.com
+  S3_BUCKET: homelink
+  S3_REGION: us-east-1
+  S3_PUBLIC_URL: https://cdn.example.com

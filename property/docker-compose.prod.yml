@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: .env.production
+    environment: { POSTGRES_DB: smart_property, POSTGRES_USER: homelink, POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}" }
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck: { test: [CMD-SHELL, "pg_isready -U homelink -d smart_property"], interval: 10s, timeout: 5s, retries: 10 }
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: [redis-server, --appendonly, "yes", --requirepass, "${REDIS_PASSWORD}"]
+    volumes: [redis_data:/data]
+    healthcheck: { test: [CMD, redis-cli, -a, "${REDIS_PASSWORD}", ping], interval: 10s, timeout: 5s, retries: 10 }
+  migrate:
+    build: { context: ./backend, target: migrate }
+    env_file: .env.production
+    depends_on: { postgres: { condition: service_healthy } }
+    restart: "no"
+  api:
+    build: { context: ./backend, target: runtime }
+    restart: unless-stopped
+    env_file: .env.production
+    depends_on: { migrate: { condition: service_completed_successfully }, redis: { condition: service_healthy } }
+    healthcheck: { test: [CMD, node, -e, "fetch('http://127.0.0.1:3001/health').then(r=>{if(!r.ok)process.exit(1)})"], interval: 30s, timeout: 5s, retries: 5 }
+  web:
+    build: { context: ./frontend, args: { VITE_API_URL: /api/v1 } }
+    restart: unless-stopped
+    ports: ["8080:8080"]
+    depends_on: { api: { condition: service_healthy } }
+volumes: { postgres_data: {}, redis_data: {} }

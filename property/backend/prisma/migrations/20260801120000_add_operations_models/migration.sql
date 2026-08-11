@@ -1,0 +1,44 @@
+CREATE TYPE "MeterType" AS ENUM ('water','electricity','heating','gas');
+CREATE TYPE "MeterReadingStatus" AS ENUM ('pending','approved','flagged','rejected');
+CREATE TYPE "MaintenancePriority" AS ENUM ('low','normal','high','urgent');
+CREATE TYPE "MaintenanceStatus" AS ENUM ('open','assigned','in_progress','resolved','closed','canceled');
+CREATE TYPE "WorkOrderStatus" AS ENUM ('assigned','in_progress','completed','canceled');
+CREATE TYPE "AnnouncementAudience" AS ENUM ('all','residents','staff');
+CREATE TYPE "NotificationType" AS ENUM ('info','billing','payment','maintenance','announcement');
+
+CREATE TABLE "Meter" ("id" TEXT PRIMARY KEY, "tenantId" TEXT NOT NULL, "unitId" TEXT NOT NULL, "serialNumber" TEXT NOT NULL, "type" "MeterType" NOT NULL, "isActive" BOOLEAN NOT NULL DEFAULT true, "installedAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "MeterReading" ("id" TEXT PRIMARY KEY, "meterId" TEXT NOT NULL, "recordedById" TEXT, "previousValue" DECIMAL(14,3) NOT NULL, "currentValue" DECIMAL(14,3) NOT NULL, "usage" DECIMAL(14,3) NOT NULL, "status" "MeterReadingStatus" NOT NULL DEFAULT 'pending', "readAt" TIMESTAMP(3) NOT NULL, "photoUrl" TEXT, "note" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "MaintenanceRequest" ("id" TEXT PRIMARY KEY, "tenantId" TEXT NOT NULL, "unitId" TEXT, "requesterProfileId" TEXT, "title" TEXT NOT NULL, "description" TEXT NOT NULL, "priority" "MaintenancePriority" NOT NULL DEFAULT 'normal', "status" "MaintenanceStatus" NOT NULL DEFAULT 'open', "slaDueAt" TIMESTAMP(3), "resolvedAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "WorkOrder" ("id" TEXT PRIMARY KEY, "maintenanceRequestId" TEXT NOT NULL, "assigneeId" TEXT, "status" "WorkOrderStatus" NOT NULL DEFAULT 'assigned', "scheduledAt" TIMESTAMP(3), "startedAt" TIMESTAMP(3), "completedAt" TIMESTAMP(3), "notes" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "Announcement" ("id" TEXT PRIMARY KEY, "tenantId" TEXT NOT NULL, "authorId" TEXT, "title" TEXT NOT NULL, "body" TEXT NOT NULL, "audience" "AnnouncementAudience" NOT NULL DEFAULT 'all', "publishedAt" TIMESTAMP(3), "expiresAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "Notification" ("id" TEXT PRIMARY KEY, "tenantId" TEXT, "userId" TEXT NOT NULL, "type" "NotificationType" NOT NULL DEFAULT 'info', "title" TEXT NOT NULL, "body" TEXT NOT NULL, "route" TEXT, "readAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP);
+
+CREATE UNIQUE INDEX "Meter_tenantId_serialNumber_key" ON "Meter"("tenantId","serialNumber");
+CREATE INDEX "Meter_unitId_type_idx" ON "Meter"("unitId","type");
+CREATE INDEX "Meter_tenantId_isActive_idx" ON "Meter"("tenantId","isActive");
+CREATE UNIQUE INDEX "MeterReading_meterId_readAt_key" ON "MeterReading"("meterId","readAt");
+CREATE INDEX "MeterReading_meterId_status_idx" ON "MeterReading"("meterId","status");
+CREATE INDEX "MeterReading_recordedById_idx" ON "MeterReading"("recordedById");
+CREATE INDEX "MaintenanceRequest_tenantId_status_priority_idx" ON "MaintenanceRequest"("tenantId","status","priority");
+CREATE INDEX "MaintenanceRequest_unitId_idx" ON "MaintenanceRequest"("unitId");
+CREATE INDEX "MaintenanceRequest_requesterProfileId_idx" ON "MaintenanceRequest"("requesterProfileId");
+CREATE INDEX "WorkOrder_maintenanceRequestId_idx" ON "WorkOrder"("maintenanceRequestId");
+CREATE INDEX "WorkOrder_assigneeId_status_idx" ON "WorkOrder"("assigneeId","status");
+CREATE INDEX "Announcement_tenantId_publishedAt_idx" ON "Announcement"("tenantId","publishedAt");
+CREATE INDEX "Announcement_authorId_idx" ON "Announcement"("authorId");
+CREATE INDEX "Notification_userId_readAt_createdAt_idx" ON "Notification"("userId","readAt","createdAt");
+CREATE INDEX "Notification_tenantId_createdAt_idx" ON "Notification"("tenantId","createdAt");
+
+ALTER TABLE "Meter" ADD FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE;
+ALTER TABLE "Meter" ADD FOREIGN KEY ("unitId") REFERENCES "Unit"("id") ON DELETE CASCADE;
+ALTER TABLE "MeterReading" ADD FOREIGN KEY ("meterId") REFERENCES "Meter"("id") ON DELETE CASCADE;
+ALTER TABLE "MeterReading" ADD FOREIGN KEY ("recordedById") REFERENCES "User"("id") ON DELETE SET NULL;
+ALTER TABLE "MaintenanceRequest" ADD FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE;
+ALTER TABLE "MaintenanceRequest" ADD FOREIGN KEY ("unitId") REFERENCES "Unit"("id") ON DELETE SET NULL;
+ALTER TABLE "MaintenanceRequest" ADD FOREIGN KEY ("requesterProfileId") REFERENCES "ResidentProfile"("id") ON DELETE SET NULL;
+ALTER TABLE "WorkOrder" ADD FOREIGN KEY ("maintenanceRequestId") REFERENCES "MaintenanceRequest"("id") ON DELETE CASCADE;
+ALTER TABLE "WorkOrder" ADD FOREIGN KEY ("assigneeId") REFERENCES "User"("id") ON DELETE SET NULL;
+ALTER TABLE "Announcement" ADD FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE;
+ALTER TABLE "Announcement" ADD FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL;
+ALTER TABLE "Notification" ADD FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE;
+ALTER TABLE "Notification" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE;

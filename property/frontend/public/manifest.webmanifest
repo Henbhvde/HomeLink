@@ -1,0 +1,12 @@
+{
+  "name": "HomeLink Smart Property",
+  "short_name": "HomeLink",
+  "description": "Property management, resident billing, maintenance, and notices.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#090909",
+  "theme_color": "#090909",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

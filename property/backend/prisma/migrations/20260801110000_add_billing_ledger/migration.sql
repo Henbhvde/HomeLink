@@ -1,0 +1,41 @@
+CREATE TYPE "InvoiceStatus" AS ENUM ('draft','approved','sent','paid','overdue','void');
+CREATE TYPE "PaymentStatus" AS ENUM ('pending','confirmed','failed','refunded');
+CREATE TYPE "LedgerEntryType" AS ENUM ('debit','credit','adjustment');
+
+CREATE TABLE "Tariff" ("id" TEXT PRIMARY KEY, "tenantId" TEXT NOT NULL, "name" TEXT NOT NULL, "serviceCode" TEXT NOT NULL, "billingUnit" TEXT NOT NULL, "unitPrice" DECIMAL(14,2) NOT NULL, "isActive" BOOLEAN NOT NULL DEFAULT true, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "Invoice" ("id" TEXT PRIMARY KEY, "tenantId" TEXT NOT NULL, "unitId" TEXT NOT NULL, "residentProfileId" TEXT, "number" TEXT NOT NULL, "status" "InvoiceStatus" NOT NULL DEFAULT 'draft', "periodStart" TIMESTAMP(3) NOT NULL, "periodEnd" TIMESTAMP(3) NOT NULL, "dueAt" TIMESTAMP(3) NOT NULL, "subtotal" DECIMAL(14,2) NOT NULL, "taxAmount" DECIMAL(14,2) NOT NULL DEFAULT 0, "totalAmount" DECIMAL(14,2) NOT NULL, "approvedAt" TIMESTAMP(3), "sentAt" TIMESTAMP(3), "paidAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "InvoiceLine" ("id" TEXT PRIMARY KEY, "invoiceId" TEXT NOT NULL, "tariffId" TEXT, "description" TEXT NOT NULL, "quantity" DECIMAL(12,3) NOT NULL DEFAULT 1, "unitPrice" DECIMAL(14,2) NOT NULL, "amount" DECIMAL(14,2) NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE "Payment" ("id" TEXT PRIMARY KEY, "tenantId" TEXT NOT NULL, "residentProfileId" TEXT, "reference" TEXT NOT NULL, "method" TEXT NOT NULL, "status" "PaymentStatus" NOT NULL DEFAULT 'pending', "amount" DECIMAL(14,2) NOT NULL, "paidAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "PaymentAllocation" ("id" TEXT PRIMARY KEY, "paymentId" TEXT NOT NULL, "invoiceId" TEXT NOT NULL, "amount" DECIMAL(14,2) NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE "LedgerEntry" ("id" TEXT PRIMARY KEY, "tenantId" TEXT NOT NULL, "invoiceId" TEXT, "paymentId" TEXT, "type" "LedgerEntryType" NOT NULL, "account" TEXT NOT NULL, "amount" DECIMAL(14,2) NOT NULL, "description" TEXT, "occurredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP);
+
+CREATE UNIQUE INDEX "Tariff_tenantId_serviceCode_key" ON "Tariff"("tenantId","serviceCode");
+CREATE INDEX "Tariff_tenantId_isActive_idx" ON "Tariff"("tenantId","isActive");
+CREATE UNIQUE INDEX "Invoice_tenantId_number_key" ON "Invoice"("tenantId","number");
+CREATE INDEX "Invoice_tenantId_status_dueAt_idx" ON "Invoice"("tenantId","status","dueAt");
+CREATE INDEX "Invoice_unitId_periodStart_idx" ON "Invoice"("unitId","periodStart");
+CREATE INDEX "Invoice_residentProfileId_idx" ON "Invoice"("residentProfileId");
+CREATE INDEX "InvoiceLine_invoiceId_idx" ON "InvoiceLine"("invoiceId");
+CREATE INDEX "InvoiceLine_tariffId_idx" ON "InvoiceLine"("tariffId");
+CREATE UNIQUE INDEX "Payment_tenantId_reference_key" ON "Payment"("tenantId","reference");
+CREATE INDEX "Payment_tenantId_status_paidAt_idx" ON "Payment"("tenantId","status","paidAt");
+CREATE INDEX "Payment_residentProfileId_idx" ON "Payment"("residentProfileId");
+CREATE UNIQUE INDEX "PaymentAllocation_paymentId_invoiceId_key" ON "PaymentAllocation"("paymentId","invoiceId");
+CREATE INDEX "PaymentAllocation_invoiceId_idx" ON "PaymentAllocation"("invoiceId");
+CREATE INDEX "LedgerEntry_tenantId_occurredAt_idx" ON "LedgerEntry"("tenantId","occurredAt");
+CREATE INDEX "LedgerEntry_invoiceId_idx" ON "LedgerEntry"("invoiceId");
+CREATE INDEX "LedgerEntry_paymentId_idx" ON "LedgerEntry"("paymentId");
+
+ALTER TABLE "Tariff" ADD CONSTRAINT "Tariff_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_unitId_fkey" FOREIGN KEY ("unitId") REFERENCES "Unit"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_residentProfileId_fkey" FOREIGN KEY ("residentProfileId") REFERENCES "ResidentProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "InvoiceLine" ADD CONSTRAINT "InvoiceLine_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "Invoice"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "InvoiceLine" ADD CONSTRAINT "InvoiceLine_tariffId_fkey" FOREIGN KEY ("tariffId") REFERENCES "Tariff"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_residentProfileId_fkey" FOREIGN KEY ("residentProfileId") REFERENCES "ResidentProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "PaymentAllocation" ADD CONSTRAINT "PaymentAllocation_paymentId_fkey" FOREIGN KEY ("paymentId") REFERENCES "Payment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "PaymentAllocation" ADD CONSTRAINT "PaymentAllocation_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "Invoice"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "LedgerEntry" ADD CONSTRAINT "LedgerEntry_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "LedgerEntry" ADD CONSTRAINT "LedgerEntry_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "Invoice"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "LedgerEntry" ADD CONSTRAINT "LedgerEntry_paymentId_fkey" FOREIGN KEY ("paymentId") REFERENCES "Payment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
