@@ -7,7 +7,8 @@ const hash = (token: string) => createHash('sha256').update(token).digest('hex')
 const newToken = () => randomBytes(48).toString('base64url');
 
 export function refreshCookie(token: string, clear = false) {
-  return `${refreshCookieName}=${clear ? '' : token}; HttpOnly; Path=/api/v1/auth; SameSite=Lax; Max-Age=${clear ? 0 : refreshTtlSeconds}${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`;
+  const production = process.env.NODE_ENV === 'production';
+  return `${refreshCookieName}=${clear ? '' : token}; HttpOnly; Path=/api/v1/auth; SameSite=${production ? 'None' : 'Lax'}; Max-Age=${clear ? 0 : refreshTtlSeconds}${production ? '; Secure' : ''}`;
 }
 
 export function readRefreshCookie(header?: string) {

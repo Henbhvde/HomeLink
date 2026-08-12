@@ -1,4 +1,4 @@
-import type { AuthUser } from '../types/auth';
+import type { AuthUser, UserRole } from '../types/auth';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3001/api/v1';
 let accessToken: string | null = null;
@@ -14,6 +14,24 @@ export type AuthSession = {
   user: AuthUser;
   token: string;
 };
+
+const validRoles = new Set<UserRole>(['unassigned', 'super_admin', 'manager', 'accountant', 'staff', 'resident']);
+
+function normalizeAuthSession(value: unknown): AuthSession {
+  const root = value && typeof value === 'object' ? value as Record<string, unknown> : null;
+  const nested = root?.session && typeof root.session === 'object' ? root.session as Record<string, unknown> : null;
+  const session = nested ?? root;
+  const user = session?.user && typeof session.user === 'object' ? session.user as Record<string, unknown> : null;
+  const token = typeof session?.token === 'string'
+    ? session.token
+    : typeof session?.accessToken === 'string' ? session.accessToken : null;
+
+  if (!user || typeof user.id !== 'string' || typeof user.email !== 'string'
+      || typeof user.role !== 'string' || !validRoles.has(user.role as UserRole) || !token) {
+    throw new Error('Нэвтрэх мэдээллийн хариу буруу байна. Backend-ээ дахин deploy хийнэ үү.');
+  }
+  return { user: user as unknown as AuthUser, token };
+}
 
 export type OnboardingCheckout = {
   tenantId: string;
@@ -66,16 +84,16 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const loginApi = (email: string, password: string) =>
-  request<AuthSession>('/auth/login', {
+  request<unknown>('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
-  });
+  }).then(normalizeAuthSession);
 
 export const registerApi = (payload: RegisterPayload) =>
-  request<AuthSession>('/auth/register', {
+  request<unknown>('/auth/register', {
     method: 'POST',
     body: JSON.stringify(payload),
-  });
+  }).then(normalizeAuthSession);
 
 export const forgotPasswordApi = (email: string) =>
   request<{ email: string; expiresInMinutes: number; resetCode?: string }>('/auth/forgot-password', {
@@ -96,13 +114,13 @@ export const resetPasswordApi = (resetToken: string, password: string) =>
   });
 
 export const googleLoginApi = (code: string, state: string, redirectUri: string) =>
-  request<AuthSession>('/auth/google', {
+  request<unknown>('/auth/google', {
     method: 'POST',
     body: JSON.stringify({ code, state, redirectUri }),
-  });
+  }).then(normalizeAuthSession);
 
 export function getGoogleRedirectUri() {
-  return `${window.location.origin}/auth/callback`;
+  return import.meta.env.VITE_GOOGLE_REDIRECT_URI?.trim() || `${window.location.origin}/auth/callback`;
 }
 
 export function startGoogleLogin() {
@@ -114,13 +132,13 @@ export const getCurrentUserApi = (token: string) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const refreshSessionApi = () => request<AuthSession>('/auth/refresh', { method: 'POST' });
+export const refreshSessionApi = () => request<unknown>('/auth/refresh', { method: 'POST' }).then(normalizeAuthSession);
 export const logoutApi = () => request<{ revoked: boolean }>('/auth/logout', { method: 'POST' });
 export const createOrganizationRequestApi = (name: string, location?: string, plan?: 'Start' | 'Growth' | 'Enterprise') => request<{ id: string; status: string }>('/platform/requests', { method: 'POST', body: JSON.stringify({ name, location, plan }) });
 export const createOnboardingCheckoutApi = (tenantId: string) => request<OnboardingCheckout>(`/platform/requests/${tenantId}/checkout`, { method: 'POST' });
 export const verifyOnboardingPaymentApi = (tenantId: string) => request<{ paid: boolean; session?: AuthSession }>(`/platform/requests/${tenantId}/checkout/verify`, { method: 'POST' });
 export const completeStripeReturnApi = (tenantId: string, sessionId: string) => request<{ paid: boolean; session?: AuthSession }>('/platform/checkout/complete', { method: 'POST', body: JSON.stringify({ tenantId, sessionId }) });
-export const acceptInviteApi = (token: string) => request<AuthSession>('/invites/accept', { method: 'POST', body: JSON.stringify({ token }) });
+export const acceptInviteApi = (token: string) => request<unknown>('/invites/accept', { method: 'POST', body: JSON.stringify({ token }) }).then(normalizeAuthSession);
 
 export function setAccessToken(token: string | null) {
   accessToken = token;

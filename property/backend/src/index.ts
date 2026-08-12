@@ -98,6 +98,10 @@ const mongolianErrors: Record<string, string> = {
   'Google OAuth token exchange failed.': 'Google-ээр нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу.',
   'Google account could not be verified.': 'Google бүртгэлийг баталгаажуулж чадсангүй.',
   'Google login failed.': 'Google-ээр нэвтрэхэд алдаа гарлаа.',
+  'Google OAuth environment variables are not configured.':
+    'Google нэвтрэлтийн тохиргоо сервер дээр дутуу байна.',
+  'Google redirect URI does not match server configuration.':
+    'Google redirect URI серверийн тохиргоотой таарахгүй байна.',
   'Payment webhook verification failed.': 'Төлбөрийн баталгаажуулалт амжилтгүй боллоо.',
   'Payment webhook configuration is incomplete.': 'Төлбөрийн тохиргоо дутуу байна.',
   'Invalid payment webhook payload.': 'Төлбөрийн мэдээлэл буруу байна.',

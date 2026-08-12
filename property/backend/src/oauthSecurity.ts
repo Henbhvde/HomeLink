@@ -23,5 +23,8 @@ export function verifyOAuthFlow(cookie: string | null, state: string, redirectUr
   } catch { return null; }
 }
 
-export const oauthCookie = (value = '', clear = false) => `${oauthCookieName}=${value}; HttpOnly; Path=/api/v1/auth/google; SameSite=Lax; Max-Age=${clear ? 0 : 600}${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`;
+export const oauthCookie = (value = '', clear = false) => {
+  const production = process.env.NODE_ENV === 'production';
+  return `${oauthCookieName}=${value}; HttpOnly; Path=/api/v1/auth/google; SameSite=${production ? 'None' : 'Lax'}; Max-Age=${clear ? 0 : 600}${production ? '; Secure' : ''}`;
+};
 export const readOAuthCookie = (header?: string) => header?.split(';').map((item) => item.trim()).find((item) => item.startsWith(`${oauthCookieName}=`))?.slice(oauthCookieName.length + 1) ?? null;
