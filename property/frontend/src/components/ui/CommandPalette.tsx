@@ -12,6 +12,9 @@ const roleCommands = {
   super_admin: [['Платформ', '/platform'], ['Хүсэлтүүд', '/platform/requests'], ['Байгууллагууд', '/platform/tenants'], ['Орлого', '/platform/revenue'], ['Тохиргоо', '/platform/settings']],
 } as const;
 
+type CommandRole = keyof typeof roleCommands;
+type Command = readonly [string, string];
+
 export default function CommandPalette() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -19,7 +22,10 @@ export default function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
-  const commands = useMemo(() => user ? roleCommands[user.role] ?? [] : [['Нэвтрэх', '/login'], ['Үнийн мэдээлэл', '/pricing']] as const, [user]);
+  const commands: readonly Command[] = useMemo(() => {
+    if (!user) return [['Нэвтрэх', '/login'], ['Үнийн мэдээлэл', '/pricing']] as const;
+    return user.role === 'unassigned' ? [] : roleCommands[user.role as CommandRole];
+  }, [user]);
   const results = commands.filter(([label]) => label.toLocaleLowerCase('mn').includes(query.trim().toLocaleLowerCase('mn')));
 
   useEffect(() => {

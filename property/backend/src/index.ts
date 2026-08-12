@@ -7,7 +7,7 @@ import { getDomainPrismaAdapter } from './domainPrismaCrud.js';
 import { createAccessToken, createPasswordResetToken, hashSensitiveToken, matchesSensitiveToken, verifyPasswordResetToken, type AuthTokenPayload } from './auth.js';
 import { hashPassword, verifyPassword } from './password.js';
 import { prisma } from './prisma.js';
-import { ensureRedisConnection } from './redis.js';
+import { ensureRedisConnection, getRedisMode } from './redis.js';
 import { approveRequestSchema, bankStatementImportSchema, fileUploadSchema, forgotPasswordSchema, googleOAuthSchema, googleStartQuerySchema, idParamsSchema, inviteAcceptSchema, invoiceGenerationSchema, inviteCreateSchema, loginSchema, notificationQueueSchema, organizationRequestSchema, paginationQuerySchema, parseBody, parseParams, parseQuery, paymentAllocationSchema, paymentWebhookHeadersSchema, paymentWebhookParamsSchema, paymentWebhookSchema, profileUpdateSchema, qpayInvoiceCreateSchema, readOnlySchema, registerSchema, rejectRequestSchema, reportExportParamsSchema, resetPasswordSchema, residentImportSchema, residentMembershipRequestSchema, roleChangeSchema, statePayloadSchema, subscriptionSchema, tenantListQuerySchema, verifyOtpSchema } from './validation.js';
 import { allocatePayment, generateInvoices, importResidents, transitionInvoice } from './transactionService.js';
 import { issueRefreshToken, listSessions, readRefreshCookie, refreshCookie, revokeAllSessions, revokeRefreshToken, revokeSession, rotateRefreshToken } from './refreshToken.js';
@@ -446,7 +446,7 @@ app.get('/health', async (_req, res) => {
       status: 'ok',
       service: 'platform-api',
       postgres: 'connected',
-      redis: 'connected',
+      redis: getRedisMode() === 'redis' ? 'connected' : 'in-memory-fallback',
     });
   } catch {
     return sendError(res, 503, 'Service dependencies are unavailable.');
@@ -1935,6 +1935,6 @@ tenants = await store.getPlatformTenants<Tenant[]>(initialTenants);
 const runWorker = () => void runBackgroundJobs(prisma).catch((error) => logEvent('error', 'background.worker_error', { message: error instanceof Error ? error.message : 'Unknown error' }));
 runWorker(); const backgroundWorker = setInterval(runWorker, 30_000); backgroundWorker.unref();
 
-app.listen(port, () => {
-  logEvent('info', 'server.started', { port });
+app.listen(port, '0.0.0.0', () => {
+  logEvent('info', 'server.started', { port, host: '0.0.0.0', redis: getRedisMode() });
 });

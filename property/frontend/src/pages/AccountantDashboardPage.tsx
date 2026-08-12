@@ -87,13 +87,7 @@ export default function AccountantDashboardPage() {
     });
     return `M ${pts.join(' L ')}`;
   };
-  const getAreaPathD = (data: number[]) => {
-    const linePath = getPathD(data);
-    return `${linePath} L 900,250 L 0,250 Z`;
-  };
-
   const cashLineD = getPathD(incomeData);
-  const cashAreaD = getAreaPathD(incomeData);
   const expenseLineD = getPathD(expenseData);
 
   const steps = [
@@ -187,7 +181,7 @@ export default function AccountantDashboardPage() {
                   <stop offset=".46" stopColor="#dd6b2a" stopOpacity=".35" />
                   <stop offset="1" stopColor="#a90b64" stopOpacity=".1" />
                 </linearGradient>
-                <linearGradient id="cashLine" x1="0" x2="0" x2="1" y2="0">
+                <linearGradient id="cashLine" x1="0" y1="0" x2="1" y2="0">
                   <stop stopColor="#e49a2b" />
                   <stop offset=".48" stopColor="#ffd661" />
                   <stop offset="1" stopColor="#ef6a35" />

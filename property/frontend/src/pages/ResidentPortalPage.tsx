@@ -86,6 +86,10 @@ const startingNotices: Notice[] = [
   },
 ];
 
+void invoiceLines;
+void paymentHistory;
+void startingNotices;
+
 function Dialog({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 backdrop-blur-sm sm:items-center" role="dialog" aria-modal="true">

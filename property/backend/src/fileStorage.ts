@@ -32,4 +32,10 @@ async function s3Put({ key, bytes, mimeType }: PutInput) {
   return `${process.env.S3_PUBLIC_URL!.replace(/\/$/, '')}/${key.split('/').map(encodeURIComponent).join('/')}`;
 }
 
-export const createFileStorage = (): FileStorage => process.env.NODE_ENV === 'production' ? { put: s3Put } : new LocalStorage();
+const hasS3Config = () => ['S3_ENDPOINT', 'S3_BUCKET', 'S3_REGION', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'S3_PUBLIC_URL'].every((name) => Boolean(process.env[name]?.trim()));
+
+export const createFileStorage = (): FileStorage => {
+  if (process.env.NODE_ENV !== 'production') return new LocalStorage();
+  if (hasS3Config()) return { put: s3Put };
+  return { put: async () => { throw new Error('File storage is not configured.'); } };
+};

@@ -10,12 +10,17 @@ const tours = {
   super_admin: [['Платформын самбар', 'Байгууллага, хүсэлт, орлогын ерөнхий төлөв энд байна.'], ['Хурдан хайлт', 'Ctrl/Cmd + K дарж platform хэсгүүд рүү очно.'], ['Тохиргоо', 'Хандалт болон системийн тохиргоогоо шалгаарай.']],
 } as const;
 
+type TourRole = keyof typeof tours;
+
 export default function GuidedTour() {
   const { user, isAuthenticated } = useAuth();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const storageKey = `homelink-tour-complete:${user?.id ?? 'guest'}`;
-  const steps = useMemo(() => user ? tours[user.role] ?? tours.manager : tours.manager, [user]);
+  const steps = useMemo(
+    () => user && user.role !== 'unassigned' ? tours[user.role as TourRole] : tours.manager,
+    [user],
+  );
 
   useEffect(() => {
     setStep(0);

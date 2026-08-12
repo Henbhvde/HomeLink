@@ -50,6 +50,8 @@ const initialNotices: Notice[] = [
   },
 ];
 
+void initialNotices;
+
 const formatMnt = (amount: number) => {
   if (amount >= 1_000_000) return `₮${(amount / 1_000_000).toFixed(2)}M`;
   if (amount >= 1_000) return `₮${Math.round(amount / 1_000)}K`;

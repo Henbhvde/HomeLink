@@ -221,15 +221,15 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
     enabled: !!token && user?.role === 'super_admin',
   });
 
-  const { data: platformTenants, isLoading: isLoadingTenants } = useQuery({
+  const { data: platformTenants } = useQuery<Tenant[]>({
     queryKey: ['platform-tenants', token],
-    queryFn: () => apiClient.getPlatformTenants(token || ''),
+    queryFn: () => apiClient.getPlatformTenants(token || '') as Promise<Tenant[]>,
     enabled: !!token && user?.role === 'super_admin',
   });
 
-  const { data: platformRequests } = useQuery({
+  const { data: platformRequests } = useQuery<ApprovalRequest[]>({
     queryKey: ['platform-requests', token],
-    queryFn: () => apiClient.getPlatformRequests(token || ''),
+    queryFn: () => apiClient.getPlatformRequests(token || '') as Promise<ApprovalRequest[]>,
     enabled: !!token && user?.role === 'super_admin',
   });
 
