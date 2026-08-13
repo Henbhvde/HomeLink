@@ -51,6 +51,14 @@ import {
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
 validateProductionEnvironment();
+
+function getFrontendUrl() {
+  const configured = process.env.FRONTEND_URLS ?? process.env.FRONTEND_URL;
+  return configured
+    ?.split(',')
+    .map((url) => url.trim())
+    .find(Boolean);
+}
 const store = await createDataStore(prisma);
 const fileStorage = createFileStorage();
 
@@ -441,6 +449,20 @@ async function verifyGoogleIdToken(idToken: string, expectedNonce: string) {
   }
   return profile;
 }
+
+app.get('/', (_req, res) => {
+  const frontendUrl = getFrontendUrl();
+
+  if (frontendUrl) {
+    return res.redirect(302, frontendUrl);
+  }
+
+  return sendSuccess(res, 'HomeLink API ажиллаж байна.', {
+    status: 'ok',
+    service: 'HomeLink API',
+    health: '/health',
+  });
+});
 
 app.get('/health', async (_req, res) => {
   try {
