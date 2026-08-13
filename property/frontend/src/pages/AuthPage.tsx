@@ -4,8 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { useAuth } from '../contexts/AuthContext';
-import { forgotPasswordApi, loginApi, registerApi, resetPasswordApi, startGoogleLogin, verifyOtpApi } from '../services/authApi';
-import type { UserRole } from '../types/auth';
+import { forgotPasswordApi, getPostLoginPath, loginApi, logoutApi, registerApi, resetPasswordApi, startGoogleLogin, verifyOtpApi } from '../services/authApi';
 import { validateLoginForm, validateRecoveryForm, validateRegisterForm, validateResetPasswordForm, validateOtpCode } from '../utils/authValidation';
 
 export type AuthScreen = 'login' | 'register' | 'forgot-password' | 'verify-otp' | 'reset-password' | 'onboarding';
@@ -27,7 +26,7 @@ type OnboardingFormState = {
 
 const screenCopy: Record<AuthScreen, { eyebrow: string; title: string; description: string }> = {
   login: { eyebrow: 'WELCOME BACK', title: 'Тавтай морил.', description: 'Удирдлагын самбартаа аюулгүй нэвтэрнэ үү.' },
-  register: { eyebrow: 'CREATE YOUR WORKSPACE', title: 'Шинэ эхлэл.', description: 'Хотхоныхоо ухаалаг удирдлагыг хэдхэн алхмаар эхлүүлээрэй.' },
+  register: { eyebrow: 'CREATE ACCOUNT', title: 'Шинэ эхлэл.', description: 'HomeLink хэрэглэгчийн бүртгэлээ үүсгэнэ үү.' },
   'forgot-password': { eyebrow: 'PASSWORD RECOVERY', title: 'Нууц үгээ сэргээх.', description: 'Бүртгэлтэй и-мэйл хаягаа оруулна уу.' },
   'verify-otp': { eyebrow: 'SECURITY CHECK', title: 'Кодоо баталгаажуулна уу.', description: 'Таны и-мэйл рүү илгээсэн 6 оронтой кодыг оруулна уу.' },
   'reset-password': { eyebrow: 'NEW PASSWORD', title: 'Шинэ нууц үг.', description: 'Аюулгүй, давтагдаагүй нууц үг сонгоорой.' },
@@ -44,7 +43,6 @@ export default function AuthPage({ screen }: AuthPageProps) {
   const [registerName, setRegisterName] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
-  const [workspaceName, setWorkspaceName] = useState('');
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [onboardingForm, setOnboardingForm] = useState<OnboardingFormState>({
     propertyName: '',
@@ -74,10 +72,7 @@ export default function AuthPage({ screen }: AuthPageProps) {
   useEffect(() => {
     if (screen === 'verify-otp' && !recoveryEmail) navigate('/forgot-password', { replace: true });
     if (screen === 'reset-password' && !resetToken) navigate('/forgot-password', { replace: true });
-    if (screen === 'onboarding' && !onboardingForm.propertyName && workspaceName) {
-      setOnboardingForm((current) => ({ ...current, propertyName: workspaceName }));
-    }
-  }, [navigate, onboardingForm.propertyName, recoveryEmail, resetToken, screen, workspaceName]);
+  }, [navigate, recoveryEmail, resetToken, screen]);
 
   const completeLogin = async (event: FormEvent) => {
     event.preventDefault();
@@ -93,17 +88,9 @@ export default function AuthPage({ screen }: AuthPageProps) {
     setNotice('');
     try {
       const session = await loginApi(loginEmail, loginPassword);
-      const routeByRole: Record<UserRole, string> = {
-        unassigned: '/resident/join',
-        super_admin: '/platform',
-        manager: '/manager',
-        accountant: '/accountant',
-        staff: '/staff',
-        resident: '/resident',
-      };
       login(session.user, session.token);
       setNotice('Амжилттай нэвтэрлээ. Танай самбар руу шилжиж байна...');
-      navigate(routeByRole[session.user.role]);
+      navigate(getPostLoginPath(session.user.role));
     } catch (authError) {
       setError(authError instanceof Error ? authError.message : 'Нэвтрэхэд алдаа гарлаа.');
     } finally {
@@ -113,7 +100,7 @@ export default function AuthPage({ screen }: AuthPageProps) {
 
   const completeRegistration = async (event: FormEvent) => {
     event.preventDefault();
-    const validation = validateRegisterForm(registerName, registerEmail, workspaceName, registerPassword);
+    const validation = validateRegisterForm(registerName, registerEmail, '', registerPassword, false);
     setRegisterErrors(validation.errors);
     if (!validation.isValid) {
       setError('Бүртгүүлэхийн өмнө мэдээллээ шалгана уу.');
@@ -124,16 +111,15 @@ export default function AuthPage({ screen }: AuthPageProps) {
     setError('');
     setNotice('');
     try {
-      const session = await registerApi({
+      await registerApi({
         email: registerEmail,
         password: registerPassword,
         fullName: registerName,
-        role: 'resident',
-        workspaceName,
       });
-      login(session.user, session.token);
-      setNotice('Бүртгэл амжилттай үүслээ. СӨХ-д нэгдэх хүсэлтийн хуудас руу шилжиж байна...');
-      navigate('/resident/join');
+      await logoutApi();
+      setLoginEmail(registerEmail);
+      setLoginPassword('');
+      navigate('/login', { replace: true });
     } catch (authError) {
       setError(authError instanceof Error ? authError.message : 'Бүртгүүлэхэд алдаа гарлаа.');
     } finally {
@@ -330,23 +316,21 @@ export default function AuthPage({ screen }: AuthPageProps) {
             <div className="flex justify-end"><Link to="/forgot-password" className="text-xs text-sand hover:text-cream">Нууц үг мартсан?</Link></div>
             <Button loading={isLoading} type="submit" className="w-full" disabled={!loginEmail.trim() || !loginPassword.trim()}>Нэвтрэх <ArrowRight className="h-4 w-4" /></Button>
             <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[.16em] text-sand-500"><span className="h-px flex-1 bg-white/10" />эсвэл<span className="h-px flex-1 bg-white/10" /></div>
-            <button type="button" onClick={startGoogleLogin} className="w-full rounded-xl border border-sand/25 px-4 py-3 text-xs font-bold text-sand transition hover:bg-sand/10">Google эрхээр нэвтрэх</button>
+            <button type="button" onClick={() => startGoogleLogin('resident')} className="w-full rounded-xl border border-sand/25 px-4 py-3 text-xs font-bold text-sand transition hover:bg-sand/10">Google эрхээр нэвтрэх</button>
             <p className="pt-2 text-center text-xs text-sand-400">Бүртгэлгүй юу? <Link to="/register" className="font-semibold text-sand hover:text-cream">Үнэгүй эхлэх</Link></p>
           </form>}
 
           {screen === 'register' && <form className="mt-8 space-y-4" onSubmit={completeRegistration}>
             {error && <p className="rounded-xl border border-red-400/30 bg-red-500/10 p-3 text-xs text-red-300">{error}</p>}
-            <button type="button" onClick={startGoogleLogin} className="w-full rounded-xl border border-sand/25 px-4 py-3 text-xs font-bold text-sand transition hover:bg-sand/10">Google эрхээр эхлэх</button>
+            <button type="button" onClick={() => startGoogleLogin('resident')} className="w-full rounded-xl border border-sand/25 px-4 py-3 text-xs font-bold text-sand transition hover:bg-sand/10">Google эрхээр эхлэх</button>
             <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[.16em] text-sand-500"><span className="h-px flex-1 bg-white/10" />эсвэл<span className="h-px flex-1 bg-white/10" /></div>
             <label className="block text-xs font-semibold text-sand-200">Таны нэр<Input required value={registerName} onChange={(event) => { setRegisterName(event.target.value); if (registerErrors.name) setRegisterErrors((current) => ({ ...current, name: '' })); }} className={`mt-2 ${registerErrors.name ? 'border-red-400/60 focus:border-red-400' : ''}`} placeholder="Бат-Эрдэнэ" /></label>
             {registerErrors.name && <p className="-mt-2 text-xs text-red-300">{registerErrors.name}</p>}
             <label className="block text-xs font-semibold text-sand-200">Ажлын и-мэйл<Input required type="email" value={registerEmail} onChange={(event) => { setRegisterEmail(event.target.value); if (registerErrors.email) setRegisterErrors((current) => ({ ...current, email: '' })); }} className={`mt-2 ${registerErrors.email ? 'border-red-400/60 focus:border-red-400' : ''}`} placeholder="name@company.mn" /></label>
             {registerErrors.email && <p className="-mt-2 text-xs text-red-300">{registerErrors.email}</p>}
-            <label className="block text-xs font-semibold text-sand-200">Хотхон / СӨХ-ийн нэр<Input required value={workspaceName} onChange={(event) => { setWorkspaceName(event.target.value); if (registerErrors.workspaceName) setRegisterErrors((current) => ({ ...current, workspaceName: '' })); }} className={`mt-2 ${registerErrors.workspaceName ? 'border-red-400/60 focus:border-red-400' : ''}`} placeholder="Evergreen Residence" /></label>
-            {registerErrors.workspaceName && <p className="-mt-2 text-xs text-red-300">{registerErrors.workspaceName}</p>}
             <label className="block text-xs font-semibold text-sand-200">Нууц үг<Input required minLength={8} type="password" autoComplete="new-password" value={registerPassword} onChange={(event) => { setRegisterPassword(event.target.value); if (registerErrors.password) setRegisterErrors((current) => ({ ...current, password: '' })); }} className={`mt-2 ${registerErrors.password ? 'border-red-400/60 focus:border-red-400' : ''}`} placeholder="8-аас доошгүй тэмдэгт" /></label>
             {registerErrors.password && <p className="-mt-2 text-xs text-red-300">{registerErrors.password}</p>}
-            <Button loading={isLoading} type="submit" className="mt-2 w-full" disabled={!registerName.trim() || !registerEmail.trim() || !workspaceName.trim() || registerPassword.length < 8}>Ажлын орчин үүсгэх <ArrowRight className="h-4 w-4" /></Button>
+            <Button loading={isLoading} type="submit" className="mt-2 w-full" disabled={!registerName.trim() || !registerEmail.trim() || registerPassword.length < 8}>Бүртгэл үүсгэх <ArrowRight className="h-4 w-4" /></Button>
             <p className="text-center text-xs text-sand-400">Аль хэдийн бүртгэлтэй юу? <Link to="/login" className="font-semibold text-sand hover:text-cream">Нэвтрэх</Link></p>
           </form>}
 

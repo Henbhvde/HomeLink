@@ -13,7 +13,7 @@ const roleNames: Record<UserRole, string> = {
 };
 
 const roleHomes: Record<UserRole, string> = {
-  unassigned: '/soh/register',
+  unassigned: '/resident/join',
   super_admin: '/platform',
   manager: '/manager',
   accountant: '/accountant',

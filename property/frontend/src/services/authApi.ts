@@ -46,12 +46,32 @@ export type RegisterPayload = {
   password: string;
   fullName: string;
   phone?: string;
-  role: 'manager' | 'resident';
+  role?: 'manager' | 'resident';
   workspaceName?: string;
   building?: string;
   apartment?: string;
   inviteToken?: string;
 };
+
+export type LoginIntent = 'soh' | 'resident';
+const GOOGLE_LOGIN_INTENT_KEY = 'homelink_google_login_intent';
+
+export function getPostLoginPath(role: UserRole, intent: LoginIntent = 'resident') {
+  if (role === 'unassigned') return intent === 'soh' ? '/soh/register' : '/resident/join';
+  if (role === 'resident') return '/resident';
+  if (role === 'staff') return '/staff';
+  if (role === 'accountant') return '/accountant';
+  if (role === 'super_admin') return '/platform';
+  return '/manager';
+}
+
+export function getGoogleLoginIntent(): LoginIntent {
+  return sessionStorage.getItem(GOOGLE_LOGIN_INTENT_KEY) === 'soh' ? 'soh' : 'resident';
+}
+
+export function clearGoogleLoginIntent() {
+  sessionStorage.removeItem(GOOGLE_LOGIN_INTENT_KEY);
+}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
@@ -123,7 +143,8 @@ export function getGoogleRedirectUri() {
   return import.meta.env.VITE_GOOGLE_REDIRECT_URI?.trim() || `${window.location.origin}/auth/callback`;
 }
 
-export function startGoogleLogin() {
+export function startGoogleLogin(intent: LoginIntent = 'resident') {
+  sessionStorage.setItem(GOOGLE_LOGIN_INTENT_KEY, intent);
   window.location.assign(`${apiBaseUrl}/auth/google/start?redirectUri=${encodeURIComponent(getGoogleRedirectUri())}`);
 }
 

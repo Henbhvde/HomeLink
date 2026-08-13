@@ -25,7 +25,7 @@ export function validateLoginForm(email: string, password: string) {
   };
 }
 
-export function validateRegisterForm(name: string, email: string, workspaceName: string, password: string) {
+export function validateRegisterForm(name: string, email: string, workspaceName: string, password: string, requireWorkspace = true) {
   const errors = {
     name: '',
     email: '',
@@ -44,7 +44,7 @@ export function validateRegisterForm(name: string, email: string, workspaceName:
     errors.email = 'И-мэйл хаягийг зөв оруулна уу.';
   }
 
-  if (!workspaceName.trim()) {
+  if (requireWorkspace && !workspaceName.trim()) {
     errors.workspaceName = 'Хотхон / СӨХ-ийн нэрийг оруулна уу.';
   }
 

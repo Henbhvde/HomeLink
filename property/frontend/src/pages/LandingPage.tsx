@@ -35,6 +35,7 @@ import ShinyText from '../components/ui/ShinyText';
 import BlurText from '../components/ui/BlurText';
 import { useAuth } from '../contexts/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getPostLoginPath } from '../services/authApi';
 import AuthModal from '../components/ui/AuthModal';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -132,7 +133,7 @@ export default function LandingPage() {
           </button>
           {isAuthenticated ? (
             <button 
-              onClick={() => navigate(user?.role === 'unassigned' ? (user.building && user.apartment ? '/resident/join' : '/soh/register') : user?.role === 'super_admin' ? '/platform' : user?.role === 'accountant' ? '/accountant' : user?.role === 'staff' ? '/staff' : user?.role === 'resident' ? '/resident' : '/manager')} 
+              onClick={() => user && navigate(getPostLoginPath(user.role))}
               className="px-5 py-2 bg-sand text-onyx font-bold rounded-full text-xs transition-all flex items-center gap-1.5 shadow-md shadow-sand/15 hover:bg-cream"
             >
               Хяналтын самбар <ArrowUpRight className="w-3.5 h-3.5" />
@@ -170,7 +171,7 @@ export default function LandingPage() {
           <div className="flex flex-col gap-3 mt-6">
             {isAuthenticated ? (
               <button 
-                onClick={() => { setIsMobileMenuOpen(false); navigate(user?.role === 'unassigned' ? (user.building && user.apartment ? '/resident/join' : '/soh/register') : user?.role === 'super_admin' ? '/platform' : user?.role === 'accountant' ? '/accountant' : user?.role === 'staff' ? '/staff' : user?.role === 'resident' ? '/resident' : '/manager'); }} 
+                onClick={() => { setIsMobileMenuOpen(false); if (user) navigate(getPostLoginPath(user.role)); }}
                 className="w-full text-center py-3 bg-sand text-onyx font-bold rounded-full text-sm"
               >
                 Хяналтын самбар
@@ -222,7 +223,7 @@ export default function LandingPage() {
 
               <div className="flex flex-wrap gap-4 mb-14">
                 <button 
-                  onClick={() => navigate(isAuthenticated ? '/manager' : '/soh/register')} 
+                  onClick={() => navigate(isAuthenticated && user ? getPostLoginPath(user.role, 'soh') : '/soh/register')}
                   className="px-6 py-3.5 bg-sand hover:bg-cream text-onyx font-bold rounded-full flex items-center gap-2 transition-all shadow-md shadow-sand/10 text-sm"
                 >
                   {isAuthenticated ? 'Хяналтын самбар' : 'СӨХ бүртгүүлэх'} <ArrowRight className="w-4 h-4" />
@@ -656,7 +657,7 @@ export default function LandingPage() {
             
             <div className="flex flex-wrap items-center gap-4 shrink-0">
               <button 
-                onClick={() => navigate(isAuthenticated ? '/manager' : '/soh/register')} 
+                onClick={() => navigate(isAuthenticated && user ? getPostLoginPath(user.role, 'soh') : '/soh/register')}
                 className="px-6 py-3.5 border border-sand/60 hover:border-sand bg-sand hover:bg-cream text-onyx font-bold rounded-full transition-all text-sm shadow-md shadow-sand/10"
               >
                 {isAuthenticated ? 'Хяналтын самбар руу шилжих' : 'СӨХ бүртгүүлэх'}

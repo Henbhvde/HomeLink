@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { X, Building, Mail, Lock, User, Phone, Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { loginApi, registerApi, startGoogleLogin } from '../../services/authApi';
+import { getPostLoginPath, loginApi, logoutApi, registerApi, startGoogleLogin } from '../../services/authApi';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -16,7 +16,6 @@ export default function AuthModal({ isOpen, onClose, initialMode }: AuthModalPro
   const navigate = useNavigate();
 
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
-  const [role] = useState<'manager' | 'resident'>('resident');
   const [loginKind, setLoginKind] = useState<'soh' | 'resident'>('resident');
   
   // Fields
@@ -122,17 +121,16 @@ export default function AuthModal({ isOpen, onClose, initialMode }: AuthModalPro
       
       setIsLoading(true);
       try {
-        const session = await registerApi({
+        await registerApi({
           email,
           password,
           fullName: name,
           phone,
-          role,
         });
-        setSuccess(true);
-        login(session.user, session.token);
-        onClose();
-        navigate('/resident/join');
+        await logoutApi();
+        setPassword('');
+        setMode('login');
+        navigate('/login', { replace: true });
       } catch (authError) {
         setError(authError instanceof Error ? authError.message : 'Бүртгүүлэхэд алдаа гарлаа.');
       } finally {
@@ -156,7 +154,7 @@ export default function AuthModal({ isOpen, onClose, initialMode }: AuthModalPro
       }
       login(session.user, session.token);
       onClose();
-      navigate(loginRole === 'unassigned' ? (loginKind === 'soh' ? '/soh/register' : '/resident/join') : loginRole === 'super_admin' ? '/platform' : loginRole === 'accountant' ? '/accountant' : loginRole === 'staff' ? '/staff' : loginRole === 'manager' ? '/manager' : '/resident');
+      navigate(getPostLoginPath(loginRole, loginKind));
     } catch (authError) {
       setError(authError instanceof Error ? authError.message : 'Нэвтрэхэд алдаа гарлаа.');
     } finally {
@@ -368,7 +366,7 @@ export default function AuthModal({ isOpen, onClose, initialMode }: AuthModalPro
 
             <button
               type="button"
-              onClick={startGoogleLogin}
+              onClick={() => startGoogleLogin(mode === 'login' ? loginKind : 'resident')}
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[.04] px-4 py-2.5 text-xs font-bold text-cream transition hover:border-sand/40 hover:bg-sand/10"
             >
               Google эрхээр нэвтрэх

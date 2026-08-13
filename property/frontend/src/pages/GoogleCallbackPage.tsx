@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { getGoogleRedirectUri, googleLoginApi, startGoogleLogin } from '../services/authApi';
+import { clearGoogleLoginIntent, getGoogleLoginIntent, getGoogleRedirectUri, getPostLoginPath, googleLoginApi, startGoogleLogin } from '../services/authApi';
 
 export default function GoogleCallbackPage() {
   const [params] = useSearchParams();
@@ -22,18 +22,19 @@ export default function GoogleCallbackPage() {
       return;
     }
 
+    const intent = getGoogleLoginIntent();
     googleLoginApi(code, state, getGoogleRedirectUri())
       .then((session) => {
         window.sessionStorage.removeItem('homelink-google-oauth-retry');
+        clearGoogleLoginIntent();
         login(session.user, session.token);
-        const role = session.user.role;
-        navigate(role === 'unassigned' ? '/resident/join' : role === 'super_admin' ? '/platform' : role === 'accountant' ? '/accountant' : role === 'staff' ? '/staff' : role === 'resident' ? '/resident' : '/manager', { replace: true });
+        navigate(getPostLoginPath(session.user.role, intent), { replace: true });
       })
       .catch((error) => {
         const text = error instanceof Error ? error.message : 'Google нэвтрэлт амжилтгүй боллоо.';
         if (text.toLowerCase().includes('oauth state') && !window.sessionStorage.getItem('homelink-google-oauth-retry')) {
           window.sessionStorage.setItem('homelink-google-oauth-retry', '1');
-          startGoogleLogin();
+          startGoogleLogin(intent);
           return;
         }
         window.sessionStorage.removeItem('homelink-google-oauth-retry');

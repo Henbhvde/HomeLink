@@ -4,6 +4,9 @@ const password = 'HomeLink123!';
 
 async function login(page: Page, email: string) {
   await page.goto('/login');
+  if (email === 'manager@homelink.mn') {
+    await page.getByRole('button', { name: 'СӨХ', exact: true }).click();
+  }
   await page.locator('input[name="homelink-role-email"]').fill(email);
   await page.locator('input[name="homelink-role-password"]').fill(password);
   await page.getByRole('button', { name: 'Нэвтрэх', exact: true }).last().click();
@@ -12,7 +15,7 @@ async function login(page: Page, email: string) {
 test('login routes manager to dashboard', async ({ page }) => {
   await login(page, 'manager@homelink.mn');
   await expect(page).toHaveURL(/\/manager$/);
-  await expect(page.getByRole('heading', { name: 'Хянах самбар' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Хяналтын самбар', level: 1 })).toBeVisible();
 });
 
 test('manager dashboard loads core metrics', async ({ page }) => {
