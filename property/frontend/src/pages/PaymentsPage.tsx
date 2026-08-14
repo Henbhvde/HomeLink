@@ -11,7 +11,7 @@ import {
   ChevronRight,
   CircleDollarSign,
   FileUp,
-  Landmark,
+Landmark,
   Link2,
   Plus,
   Search,
@@ -384,7 +384,7 @@ export default function PaymentsPage() {
                   <div className="flex items-center justify-between text-xs text-sand-400 border-t border-white/[.04] pt-2.5">
                     <div>
                       <span className="block text-[10px] text-sand-500">Хоцролт: {row.daysOverdue} хоног</span>
-                      <span>Төлөх: {row.dueDate}</span>
+                      <span>Төлөх: {row.dueDate}</span> 
                     </div>
                     <div className="text-right flex flex-col items-end gap-1.5">
                       <b className="block text-cream">{formatMnt(row.amount)}</b>

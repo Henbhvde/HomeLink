@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import AdminLayout from '../layouts/AdminLayout';
 import PlatformLayout from '../layouts/PlatformLayout';
@@ -43,14 +43,6 @@ const LazyPage = ({ element }: { element: JSX.Element }) => (
   </Suspense>
 );
 
-const StaticLandingPage = () => {
-  useEffect(() => {
-    window.location.replace('/landing/index.html');
-  }, []);
-
-  return null;
-};
-
 function AppRoutes() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const isManagerWorkspaceUser = user?.role === 'manager';
@@ -71,7 +63,7 @@ function AppRoutes() {
       <Route path="/soh/register" element={<LazyPage element={<SohRegistrationPage />} />} />
       <Route path="/resident/join" element={<LazyPage element={<ResidentJoinPage />} />} />
       <Route path="/invite" element={<LazyPage element={<InvitePage />} />} />
-      <Route path="/" element={<StaticLandingPage />} />
+      <Route path="/" element={<LazyPage element={<LandingPage />} />} />
       <Route path="/pricing" element={<LazyPage element={<PricingPage />} />} />
       <Route
         path="/manager"
