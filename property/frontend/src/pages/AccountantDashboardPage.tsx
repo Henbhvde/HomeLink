@@ -22,6 +22,9 @@ const formatMnt = (amount: number) => {
   return `₮${amount.toLocaleString()}`;
 };
 
+const formatFullMnt = (amount: number) =>
+  `${amount.toLocaleString("en-US", { maximumFractionDigits: 0 })} \u20AE`;
+
 export default function AccountantDashboardPage() {
   const { token } = useAuth();
   const [locked, setLocked] = useState(false);
@@ -122,7 +125,7 @@ export default function AccountantDashboardPage() {
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">САРЫН МӨНГӨН ҮЗҮҮЛЭЛТ</p>
-              <b className="mt-3 block font-serif text-[2.05rem] font-light tracking-[-0.03em] text-[#fff8e8] sm:text-[2.5rem]">{formatMnt(cashAmount)}</b>
+              <b className="mt-3 block font-serif text-[1.85rem] font-light tracking-[-0.03em] text-[#fff8e8] sm:text-[2.15rem]">{formatFullMnt(cashAmount)}</b>
               <p className="mt-2 text-sm text-[#b8aa8b]">2026 оны {new Date().getMonth() + 1}-р сарын үүсгэх нэхэмжлэлийн дүн</p>
               <div className="mt-5 flex flex-wrap gap-2 text-[11px]">
                 <span className="rounded-lg border border-[#e0b95a]/20 bg-[#d49b2a]/[.08] px-3 py-2 text-[#e9ca84]">{unitCount} айл</span>
