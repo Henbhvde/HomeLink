@@ -252,7 +252,7 @@ export default function BuildingManagementPage() {
   return (
     <PageStateWrapper
       status={status}
-      isEmpty={buildings.length === 0}
+      isEmpty={buildings.length === 0 && !isDialogOpen}
       onRetry={retry}
       emptyIcon={Building2}
       emptyTitle="Одоогоор барилга алга"
