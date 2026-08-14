@@ -188,7 +188,7 @@ export function ResidentJoinPage() {
       <section className="mx-auto max-w-4xl rounded-[36px] border border-[#ddd3c4] bg-[#fbf8f2] p-8 shadow-xl md:p-14">
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={() => navigate(-1)}
           className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#ddd3c4] px-4 py-2 text-sm font-semibold transition hover:border-[#52745f] hover:text-[#52745f]"
           aria-label="Нүүр хуудас руу буцах"
         >
