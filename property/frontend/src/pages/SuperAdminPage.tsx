@@ -336,7 +336,7 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
           <X className="mx-auto h-10 w-10 text-red-700" />
           <p className="mt-4 text-xs font-bold tracking-[.16em] text-red-700 uppercase">АЛДАА ГАРЛАА</p>
           <h2 className="mt-1 font-serif text-lg text-[#161616]">Платформын мэдээллийг ачааллахад алдаа гарлаа.</h2>
-          <button onClick={() => window.location.reload()} className="mt-4 rounded-lg bg-[#1b1b1a] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#254333]">
+          <button onClick={() => window.location.reload()} className="mt-4 rounded-lg bg-[#a9783f] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#875b2d]">
             Дахин ачаалах
           </button>
         </div>
@@ -495,7 +495,20 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#f4efe7] text-[#25251f]">
+    <section className="platform-page relative min-h-screen overflow-hidden bg-[#f4efe7] text-[#25251f]">
+      <style>{`
+        .platform-page .bg-black,
+        .platform-page [class*="bg-[#262625]"],
+        .platform-page [class*="bg-[#1b1b1a]"] {
+          background-color: #c86745;
+          box-shadow: 0 8px 20px rgba(154, 68, 38, .22);
+        }
+        .platform-page button.bg-black:hover { background-color: #ad5033; }
+        .platform-page svg path[stroke="#202020"] { stroke: #c86745; stroke-width: 3; }
+        .platform-page svg stop[stop-color="#292929"] { stop-color: #c86745; }
+        .platform-warm-accent { background-color: #c86745; box-shadow: 0 8px 20px rgba(154, 68, 38, .24); }
+        button.platform-warm-accent:hover { background-color: #ad5033; }
+      `}</style>
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(255,252,246,.95),transparent_34%),radial-gradient(circle_at_82%_22%,rgba(82,116,95,.16),transparent_30%),linear-gradient(135deg,#f8f3eb_0%,#eee4d6_56%,#e2d3bf_100%)]" />
       {notice && <div className="fixed right-5 top-5 z-[70] flex max-w-md items-start gap-3 rounded-2xl border border-emerald-900/15 bg-white/85 px-4 py-3 text-sm text-emerald-900 shadow-2xl backdrop-blur-xl"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /><span className="flex-1">{notice}</span><button onClick={() => setNotice(null)} aria-label="Мэдэгдэл хаах"><X className="h-4 w-4" /></button></div>}
 
@@ -503,8 +516,8 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
         <div className="grid w-full overflow-hidden rounded-[30px] border border-white/65 bg-white/[.38] shadow-[0_32px_85px_rgba(69,57,43,.25)] backdrop-blur-[22px] xl:grid-cols-[220px_minmax(0,1fr)_278px]">
           <aside className="relative overflow-hidden flex flex-col border-b border-black/[.08] bg-white/[.32] p-5 xl:border-b-0 xl:border-r">
             <div className="pointer-events-none absolute inset-0 sidebar-background-animated opacity-80" />
-            <div className="relative z-10 flex items-center gap-2.5"><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#1b1b1a] text-white shadow-lg"><Building2 className="h-4 w-4" /></span><span><b className="block font-serif text-lg leading-none">HomeLink</b><small className="mt-1 block text-[7px] font-bold tracking-[.2em] text-black/45">УДИРДЛАГА</small></span></div>
-            <nav className="relative z-10 mt-6 flex gap-1 overflow-x-auto pb-1 xl:flex-col xl:overflow-visible">{nav.map(({ id, label, icon: Icon, count }) => <button key={id} onClick={() => moveTo(id)} className={`flex min-w-max items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition ${activeView === id ? 'bg-[#1d1d1c] text-white shadow-md' : 'text-black/58 hover:bg-white/60 hover:text-black'}`}><Icon className="h-4 w-4" /><span className="flex-1">{label}</span>{count !== undefined && <span className={`rounded-full px-1.5 py-0.5 text-[9px] ${activeView === id ? 'bg-white/15 text-white' : 'bg-black/[.07] text-black/60'}`}>{count}</span>}</button>)}</nav>
+            <div className="relative z-10 flex items-center gap-2.5"><span className="platform-warm-accent grid h-9 w-9 place-items-center rounded-xl text-white shadow-lg"><Building2 className="h-4 w-4" /></span><span><b className="block font-serif text-lg leading-none">HomeLink</b><small className="mt-1 block text-[7px] font-bold tracking-[.2em] text-black/45">УДИРДЛАГА</small></span></div>
+            <nav className="relative z-10 mt-6 flex gap-1 overflow-x-auto pb-1 xl:flex-col xl:overflow-visible">{nav.map(({ id, label, icon: Icon, count }) => <button key={id} onClick={() => moveTo(id)} className={`flex min-w-max items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition ${activeView === id ? 'bg-[#a9783f] text-white shadow-[0_8px_20px_rgba(143,96,45,.24)]' : 'text-black/58 hover:bg-white/60 hover:text-black'}`}><Icon className="h-4 w-4" /><span className="flex-1">{label}</span>{count !== undefined && <span className={`rounded-full px-1.5 py-0.5 text-[9px] ${activeView === id ? 'bg-white/20 text-white' : 'bg-black/[.07] text-black/60'}`}>{count}</span>}</button>)}</nav>
           </aside>
 
           <main data-platform-view={activeView} className="platform-page-content min-w-0 bg-white/[.19] p-4 sm:p-6">
@@ -635,7 +648,7 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
                   <div className="mt-5 grid gap-3">
                     <button type="button" onClick={openAuditLog} className="flex w-full items-center justify-between rounded-2xl border border-black/10 bg-white/35 px-4 py-4 text-left text-xs font-semibold transition hover:-translate-y-0.5 hover:bg-white/60 hover:shadow-lg"><span>Хяналтын бүртгэл харах</span><ChevronRight className="h-4 w-4" /></button>
                     <button type="button" onClick={checkPlatformStatus} className="flex w-full items-center justify-between rounded-2xl border border-black/10 bg-white/35 px-4 py-4 text-left text-xs font-semibold transition hover:-translate-y-0.5 hover:bg-white/60 hover:shadow-lg"><span>Платформын төлөв шалгах</span><ChevronRight className="h-4 w-4" /></button>
-                    <button type="button" onClick={updateAccessPolicy} className="flex w-full items-center justify-between rounded-2xl bg-black px-4 py-4 text-left text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#17352d] hover:shadow-lg"><span>Хандалтын бодлого шинэчлэх</span><Settings2 className="h-4 w-4" /></button>
+                    <button type="button" onClick={updateAccessPolicy} className="flex w-full items-center justify-between rounded-2xl bg-[#a9783f] px-4 py-4 text-left text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#875b2d] hover:shadow-lg"><span>Хандалтын бодлого шинэчлэх</span><Settings2 className="h-4 w-4" /></button>
                   </div>
                 </div>
               </div>
