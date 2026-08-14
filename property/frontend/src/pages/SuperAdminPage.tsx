@@ -63,6 +63,17 @@ type ApprovedRequest = ApprovalRequest & {
   approvedAt: string;
 };
 
+type PlatformRequestApi = {
+  id: string;
+  name?: string;
+  contactName?: string;
+  contactEmail?: string;
+  location?: string;
+  unitCount?: number;
+  plan?: Plan;
+  createdAt?: string;
+};
+
 type DropdownOption<T extends string> = { value: T; label: string; note?: string };
 
 function PlatformDropdown<T extends string>({ value, options, onChange, label }: {
@@ -215,27 +226,47 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
   const selectedCalendarNoteKey = getCalendarNoteKey(currentYear, currentMonth, selectedCalendarDay);
   const selectedCalendarNote = calendarNotes[selectedCalendarNoteKey];
 
-  const { data: platformOverview, isLoading: isLoadingOverview, error: overviewError } = useQuery({
+  const { data: platformOverview, isLoading: isLoadingOverview, error: overviewError, refetch: refetchOverview } = useQuery({
     queryKey: ['platform-overview', token],
     queryFn: () => apiClient.getPlatformOverview(token || ''),
     enabled: !!token && user?.role === 'super_admin',
+    refetchInterval: 5_000,
   });
 
-  const { data: platformTenants } = useQuery<Tenant[]>({
+  const { data: platformTenants, refetch: refetchTenants } = useQuery<Tenant[]>({
     queryKey: ['platform-tenants', token],
     queryFn: () => apiClient.getPlatformTenants(token || '') as Promise<Tenant[]>,
     enabled: !!token && user?.role === 'super_admin',
+    refetchInterval: 5_000,
   });
 
-  const { data: platformRequests } = useQuery<ApprovalRequest[]>({
+  const { data: platformRequests, refetch: refetchRequests } = useQuery<ApprovalRequest[]>({
     queryKey: ['platform-requests', token],
-    queryFn: () => apiClient.getPlatformRequests(token || '') as Promise<ApprovalRequest[]>,
+    queryFn: async () => {
+      const rows = await apiClient.getPlatformRequests(token || '') as PlatformRequestApi[];
+      return rows.map((row) => ({
+        id: row.id,
+        workspaceName: row.name?.trim() || 'Нэргүй байгууллага',
+        contactName: row.contactName?.trim() || row.contactEmail?.trim() || '—',
+        location: row.location?.trim() || '—',
+        unitCount: row.unitCount ?? 0,
+        requestedPlan: row.plan ?? 'Start',
+        submittedAt: row.createdAt ?? '—',
+      }));
+    },
     enabled: !!token && user?.role === 'super_admin',
+    refetchInterval: 5_000,
   });
 
-  // Use API data when available, otherwise fall back to stored/initial data
-  const displayTenants = platformTenants && platformTenants.length > 0 ? platformTenants : tenants;
-  const displayRequests = platformRequests && platformRequests.length > 0 ? platformRequests : requests;
+  // Once loaded, API data is the source of truth, including valid empty arrays.
+  const displayTenants = platformTenants ?? tenants;
+  const displayRequests = platformRequests ?? requests;
+
+  const syncAndRefresh = (path: string, options: RequestInit) => syncPlatform(path, options).then(() => {
+    void refetchOverview();
+    void refetchTenants();
+    void refetchRequests();
+  });
 
   const selectCalendarDay = (day: number) => {
     setSelectedCalendarDay(day);
@@ -389,7 +420,7 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
   };
 
   const approveRequest = (request: ApprovalRequest) => {
-    void syncPlatform(`/requests/${request.id}/approve`, { method: 'POST', body: JSON.stringify({ plan: request.requestedPlan }) });
+    void syncAndRefresh(`/requests/${request.id}/approve`, { method: 'POST', body: JSON.stringify({ plan: request.requestedPlan }) });
     setTenants((current) => {
       const tenantId = `tenant-${request.id}`;
       const next = current.some((tenant) => tenant.id === tenantId)
@@ -413,7 +444,7 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
   };
 
   const rejectRequest = (request: ApprovalRequest) => {
-    void syncPlatform(`/requests/${request.id}/reject`, { method: 'POST', body: JSON.stringify({}) });
+    void syncAndRefresh(`/requests/${request.id}/reject`, { method: 'POST', body: JSON.stringify({}) });
     setRequests((current) => {
       const next = current.filter((item) => item.id !== request.id);
       storeList(requestsStorageKey, next);
@@ -424,26 +455,26 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
 
   const updateTrial = (tenant: Tenant, value: string) => {
     if (value === 'none') {
-      void syncPlatform(`/tenants/${tenant.id}/subscription`, { method: 'PATCH', body: JSON.stringify({ trialEndsAt: null }) });
+      void syncAndRefresh(`/tenants/${tenant.id}/subscription`, { method: 'PATCH', body: JSON.stringify({ trialEndsAt: null }) });
       updateTenant(tenant.id, { trialEndsAt: undefined, status: tenant.status === 'trial' ? 'active' : tenant.status });
       setNotice(`${tenant.name}-ийн туршилтын хугацааг цуцаллаа.`);
       return;
     }
     const days = Number(value);
     const trialEndsAt = getTrialEndDate(days);
-    void syncPlatform(`/tenants/${tenant.id}/subscription`, { method: 'PATCH', body: JSON.stringify({ trialEndsAt }) });
+    void syncAndRefresh(`/tenants/${tenant.id}/subscription`, { method: 'PATCH', body: JSON.stringify({ trialEndsAt }) });
     updateTenant(tenant.id, { status: 'trial', trialEndsAt });
     setNotice(`${tenant.name}-д ${days} хоногийн туршилт тохирууллаа.`);
   };
 
   const setReadOnly = (tenant: Tenant) => {
-    void syncPlatform(`/tenants/${tenant.id}/read-only`, { method: 'POST', body: JSON.stringify({}) });
+    void syncAndRefresh(`/tenants/${tenant.id}/read-only`, { method: 'POST', body: JSON.stringify({}) });
     updateTenant(tenant.id, { status: 'read_only' });
     setNotice(`${tenant.name} одоо зөвхөн унших горимд шилжлээ.`);
   };
 
   const restoreAccess = (tenant: Tenant) => {
-    void syncPlatform(`/tenants/${tenant.id}/restore`, { method: 'POST', body: JSON.stringify({}) });
+    void syncAndRefresh(`/tenants/${tenant.id}/restore`, { method: 'POST', body: JSON.stringify({}) });
     updateTenant(tenant.id, { status: 'active' });
     setNotice(`${tenant.name}-ийн бүрэн эрхийг сэргээв.`);
   };
@@ -541,7 +572,7 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
                     return <tr key={tenant.id} className="border-t border-black/[.055] text-xs transition hover:bg-white/[.38]">
                       <td className="px-5 py-4"><div className="flex items-center gap-3"><span className="grid h-8 w-8 place-items-center rounded-lg bg-black/[.075] text-[9px] font-bold">{getInitials(tenant.name)}</span><div><b className="block">{tenant.name}</b><small className="mt-1 block text-[9px] text-black/40">{tenant.location} · {tenant.createdAt}</small></div></div></td>
                       <td className="px-4 py-4 text-black/58">{tenant.unitCount} нэгж</td>
-                      <td className="px-4 py-4"><PlatformDropdown label="Багц сонгох" value={tenant.plan} options={planOptions} onChange={(plan) => { void syncPlatform(`/tenants/${tenant.id}/subscription`, { method: 'PATCH', body: JSON.stringify({ plan }) }); updateTenant(tenant.id, { plan }); setNotice(`${tenant.name}-ийн багцыг ${planLabels[plan]} болгож шинэчиллээ.`); }} /></td>
+                      <td className="px-4 py-4"><PlatformDropdown label="Багц сонгох" value={tenant.plan} options={planOptions} onChange={(plan) => { void syncAndRefresh(`/tenants/${tenant.id}/subscription`, { method: 'PATCH', body: JSON.stringify({ plan }) }); updateTenant(tenant.id, { plan }); setNotice(`${tenant.name}-ийн багцыг ${planLabels[plan]} болгож шинэчиллээ.`); }} /></td>
                       <td className="px-4 py-4"><PlatformDropdown label="Туршилтын хугацаа сонгох" value={trialValue} options={trialOptions} onChange={(value) => { if (value !== 'custom') updateTrial(tenant, value); }} /></td>
                       <td className="px-4 py-4"><Badge tone={status.tone}>{status.label}</Badge></td>
                       <td className="px-5 py-4 text-right">{tenant.status === 'overdue' && <button onClick={() => setTenantToRestrict(tenant)} className="rounded-lg bg-red-700 px-3 py-2 text-[10px] font-bold text-white"><LockKeyhole className="mr-1 inline h-3.5 w-3.5" />Унших горим</button>}{tenant.status === 'read_only' && <button onClick={() => restoreAccess(tenant)} className="rounded-lg border border-black/15 px-3 py-2 text-[10px] font-bold"><UsersRound className="mr-1 inline h-3.5 w-3.5" />Эрх сэргээх</button>}{tenant.status === 'active' && <span className="text-[10px] text-black/42">Багцын эрх хэвийн</span>}{tenant.status === 'trial' && <span className="text-[10px] text-black/42">{tenant.trialEndsAt} хүртэл</span>}</td>
@@ -577,7 +608,7 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
                         <div>
                           <span className="block text-[9px] text-black/45 uppercase tracking-wider">Багц</span>
                           <div className="mt-1">
-                            <PlatformDropdown label="Багц сонгох" value={tenant.plan} options={planOptions} onChange={(plan) => { void syncPlatform(`/tenants/${tenant.id}/subscription`, { method: 'PATCH', body: JSON.stringify({ plan }) }); updateTenant(tenant.id, { plan }); setNotice(`${tenant.name}-ийн багцыг ${planLabels[plan]} болгож шинэчиллээ.`); }} />
+                            <PlatformDropdown label="Багц сонгох" value={tenant.plan} options={planOptions} onChange={(plan) => { void syncAndRefresh(`/tenants/${tenant.id}/subscription`, { method: 'PATCH', body: JSON.stringify({ plan }) }); updateTenant(tenant.id, { plan }); setNotice(`${tenant.name}-ийн багцыг ${planLabels[plan]} болгож шинэчиллээ.`); }} />
                           </div>
                         </div>
                         <div>
