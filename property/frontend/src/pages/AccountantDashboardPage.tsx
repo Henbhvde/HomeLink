@@ -57,7 +57,7 @@ export default function AccountantDashboardPage() {
       <div className="flex h-[75vh] items-center justify-center">
         <div className="text-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#e5bb58] border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-xs font-bold tracking-[.16em] text-[#ad8e4c] uppercase">FINANCE OPERATIONS</p>
+          <p className="mt-4 text-xs font-bold tracking-[.16em] text-[#ad8e4c] uppercase">САНХҮҮГИЙН ҮЙЛ АЖИЛЛАГАА</p>
           <h2 className="mt-1 font-serif text-lg text-[#f6efdf]">Санхүүгийн мэдээллийг ачаалж байна...</h2>
         </div>
       </div>
@@ -104,14 +104,14 @@ export default function AccountantDashboardPage() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#d9b55e]">
-            {currentMonthName.toUpperCase()} 2026 · FINANCE OPERATIONS
+            {currentMonthName.toUpperCase()} 2026 · САНХҮҮГИЙН ҮЙЛ АЖИЛЛАГАА
           </p>
-          <h1 className="mt-2 font-serif text-[2rem] font-light leading-[1.05] text-[#f6efdf] sm:text-[2.35rem] lg:text-[2.7rem]">Няравын санхүүгийн control center.</h1>
+          <h1 className="mt-2 font-serif text-[2rem] font-light leading-[1.05] text-[#f6efdf] sm:text-[2.35rem] lg:text-[2.7rem]">Няравын санхүүгийн хяналтын төв.</h1>
           <p className="mt-3 max-w-2xl text-[13px] leading-7 text-[#a99d82] sm:text-sm">Заалт, нэхэмжлэл, банкны тулгалт, зарлага болон сарын хаалтыг нэг урсгалаар удирдана.</p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#d7ad55]/25 bg-[#c89e43]/[.08] px-3 py-2 text-[10px] font-bold tracking-[.13em] text-[#eccb7b]"><span className="h-1.5 w-1.5 rounded-full bg-[#f2c65d] shadow-[0_0_10px_#f2c65d]" />MONTH IN PROGRESS</span>
-          <Badge tone={locked ? 'neutral' : 'success'}>{locked ? 'PERIOD LOCKED' : 'PERIOD OPEN'}</Badge>
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#d7ad55]/25 bg-[#c89e43]/[.08] px-3 py-2 text-[10px] font-bold tracking-[.13em] text-[#eccb7b]"><span className="h-1.5 w-1.5 rounded-full bg-[#f2c65d] shadow-[0_0_10px_#f2c65d]" />САР ҮРГЭЛЖИЛЖ БАЙНА</span>
+          <Badge tone={locked ? 'neutral' : 'success'}>{locked ? 'ҮЕ ХААЛТТАЙ' : 'ҮЕ НЭЭЛТТЭЙ'}</Badge>
         </div>
       </div>
 
@@ -121,7 +121,7 @@ export default function AccountantDashboardPage() {
           <span className="absolute right-16 top-8 h-2 w-2 rounded-full bg-[#f2c65d] shadow-[0_0_14px_#f2c65d]" />
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">MONTHLY CASH POSITION</p>
+              <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">САРЫН МӨНГӨН ҮЗҮҮЛЭЛТ</p>
               <b className="mt-3 block font-serif text-[2.05rem] font-light tracking-[-0.03em] text-[#fff8e8] sm:text-[2.5rem]">{formatMnt(cashAmount)}</b>
               <p className="mt-2 text-sm text-[#b8aa8b]">2026 оны {new Date().getMonth() + 1}-р сарын үүсгэх нэхэмжлэлийн дүн</p>
               <div className="mt-5 flex flex-wrap gap-2 text-[11px]">
@@ -131,9 +131,9 @@ export default function AccountantDashboardPage() {
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3 rounded-2xl border border-[#d9ae50]/20 bg-black/20 p-4 text-center">
-              <div><span className="text-[9px] font-bold tracking-[.12em] text-[#8f7b52]">INVOICE</span><b className="mt-2 block text-[1.05rem] font-light tracking-[0.01em] text-[#f4e6c7]">{invoicesCount}</b></div>
-              <div className="border-x border-white/[.08]"><span className="text-[9px] font-bold tracking-[.12em] text-[#8f7b52]">AVALAGA</span><b className="mt-2 block text-[1.05rem] font-light tracking-[0.01em] text-[#f4e6c7]">{formatMnt(receivables)}</b></div>
-              <div><span className="text-[9px] font-bold tracking-[.12em] text-[#8f7b52]">RECEIPTS</span><b className="mt-2 block text-[1.05rem] font-light tracking-[0.01em] text-[#f4e6c7]">{receiptsCount}</b></div>
+              <div><span className="text-[9px] font-bold tracking-[.12em] text-[#8f7b52]">НЭХЭМЖЛЭЛ</span><b className="mt-2 block text-[1.05rem] font-light tracking-[0.01em] text-[#f4e6c7]">{invoicesCount}</b></div>
+              <div className="border-x border-white/[.08]"><span className="text-[9px] font-bold tracking-[.12em] text-[#8f7b52]">АВЛАГА</span><b className="mt-2 block text-[1.05rem] font-light tracking-[0.01em] text-[#f4e6c7]">{formatMnt(receivables)}</b></div>
+              <div><span className="text-[9px] font-bold tracking-[.12em] text-[#8f7b52]">БАРИМТ</span><b className="mt-2 block text-[1.05rem] font-light tracking-[0.01em] text-[#f4e6c7]">{receiptsCount}</b></div>
             </div>
           </div>
         </FinancePanel>
@@ -141,7 +141,7 @@ export default function AccountantDashboardPage() {
         <FinancePanel className="p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">MONTHLY STATUS</p>
+              <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">САРЫН ТӨЛӨВ</p>
               <h2 className="mt-1 font-serif text-[1.3rem] font-medium leading-tight text-[#f8efdd]">Санхүүгийн хяналт</h2>
             </div>
             <Activity className="h-5 w-5 text-[#e5bb58]" />
@@ -166,7 +166,7 @@ export default function AccountantDashboardPage() {
         <FinancePanel className="overflow-hidden">
           <div className="flex flex-col gap-3 border-b border-[#c99b3d]/15 p-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">COLLECTION & CASHFLOW</p>
+              <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">ТӨЛБӨР ЦУГЛУУЛАЛТ БА МӨНГӨН УРСГАЛ</p>
               <h2 className="mt-1 font-serif text-[1.3rem] font-medium leading-tight text-[#f8efdd]">Санхүүгийн урсгал</h2>
               <p className="mt-1 text-xs text-[#a99d82]">Сарын цуглуулалт, авлага болон зарлагын хандлага</p>
             </div>
@@ -204,7 +204,7 @@ export default function AccountantDashboardPage() {
         <FinancePanel className="p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">CYCLE COMPLETION</p>
+              <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">МӨЧЛӨГИЙН ГҮЙЦЭТГЭЛ</p>
               <h2 className="mt-1 font-serif text-[1.3rem] font-medium leading-tight text-[#f8efdd]">Мөчлөгийн явц</h2>
             </div>
             <Clock3 className="h-5 w-5 text-[#e5bb58]" />
@@ -235,7 +235,7 @@ export default function AccountantDashboardPage() {
       <FinancePanel className="p-5 lg:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">MONTH-END CHECKLIST</p>
+            <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">САР ХААХ ШАЛГАХ ЖАГСААЛТ</p>
             <h2 className="mt-1 font-serif text-[1.3rem] font-medium leading-tight text-[#f8efdd]">Сарын мөчлөг</h2>
             <p className="mt-1 text-xs text-[#a99d82]">Нэхэмжлэлээс эхлээд тайлан экспортлох хүртэлх ажлын урсгал.</p>
           </div>
@@ -255,18 +255,18 @@ export default function AccountantDashboardPage() {
 
       <div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
         <FinancePanel className="p-6">
-          <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">FR-7.3 · PERIOD LOCK</p>
+          <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">FR-7.3 · ҮЕ ХААХ</p>
           <h2 className="mt-2 font-serif text-[1.3rem] font-medium leading-tight text-[#f8efdd]">2026 оны {new Date().getMonth() + 1}-р сар</h2>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#a99d82]">Сар хаасны дараа тухайн үеийн invoice, гүйлгээ, зарлагын бүртгэлд өөрчлөлт хийхгүй. Засвар шаардлагатай бол дараагийн нээлттэй үеэс adjustment хийнэ.</p>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#a99d82]">Сар хаасны дараа тухайн үеийн нэхэмжлэл, гүйлгээ, зарлагын бүртгэлд өөрчлөлт хийхгүй. Засвар шаардлагатай бол дараагийн нээлттэй үед залруулга хийнэ.</p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Button variant="outline" className="border-[#d7ad55]/45 text-[#f1d58c] hover:bg-[#d49b2a]/10" onClick={() => locked ? setLocked(false) : setIsLockConfirmOpen(true)}>
-              <CalendarLock className="h-4 w-4" />{locked ? 'Period дахин нээх' : 'Сарыг хаах'}
+              <CalendarLock className="h-4 w-4" />{locked ? 'Үеийг дахин нээх' : 'Сарыг хаах'}
             </Button>
-            <span className="inline-flex items-center gap-2 text-xs text-[#b6a685]"><CheckCircle2 className="h-4 w-4 text-emerald-300" />{invoicesCount} invoice бэлэн</span>
+            <span className="inline-flex items-center gap-2 text-xs text-[#b6a685]"><CheckCircle2 className="h-4 w-4 text-emerald-300" />{invoicesCount} нэхэмжлэл бэлэн</span>
           </div>
         </FinancePanel>
         <FinancePanel className="p-6">
-          <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">FR-7.3 · YEAR-END EXPORT</p>
+          <p className="text-[10px] font-bold tracking-[.16em] text-[#ad8e4c]">FR-7.3 · ЖИЛИЙН ЭЦСИЙН ТАТАЛТ</p>
           <h2 className="mt-2 font-serif text-[1.3rem] font-medium leading-tight text-[#f8efdd]">Хурлын тайлан</h2>
           <p className="mt-2 text-sm leading-relaxed text-[#a99d82]">Орлого, зарлага, авлага болон засварын нэгтгэлийг жилийн хурлын Excel/PDF тайлан болгож гаргана.</p>
           <Button variant="outline" className="mt-6 w-full border-[#d7ad55]/45 text-[#f1d58c] hover:bg-[#d49b2a]/10" onClick={exportAnnualReport}>

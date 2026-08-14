@@ -37,7 +37,7 @@ export default function AccountantLayout() {
           </span>
           <span>
             <b className="block font-serif text-lg leading-none text-[#f6edda]">HomeLink</b>
-            <small className="mt-1 block text-[8px] font-bold tracking-[.22em] text-[#be9a54]">FINANCE CONTROL</small>
+            <small className="mt-1 block text-[8px] font-bold tracking-[.22em] text-[#be9a54]">САНХҮҮГИЙН ХЯНАЛТ</small>
           </span>
         </NavLink>
         <button className="text-[#be9a54] lg:hidden" onClick={() => setIsMobileOpen(false)} aria-label="Цэс хаах">
@@ -57,7 +57,7 @@ export default function AccountantLayout() {
       </div>
 
       <nav className="mt-7 space-y-1">
-        <p className="px-3 pb-2 text-[9px] font-bold tracking-[.18em] text-[#806c45]">НЯРАВЫН WORKSPACE</p>
+        <p className="px-3 pb-2 text-[9px] font-bold tracking-[.18em] text-[#806c45]">НЯРАВЫН АЖЛЫН ОРЧИН</p>
         {navigation.map(({ label, icon: Icon, to }) => (
           <NavLink
             key={to}
@@ -111,15 +111,15 @@ export default function AccountantLayout() {
               <Menu className="h-4 w-4" />
             </button>
             <div>
-              <p className="text-[10px] font-bold tracking-[.16em] text-sand">EVERGREEN RESIDENCE</p>
-              <p className="mt-0.5 text-xs text-sand-400 hidden sm:block">Няравын санхүүгийн workspace</p>
+              <p className="text-[10px] font-bold tracking-[.16em] text-sand">ЭВЕРГРИН ХОТХОН</p>
+              <p className="mt-0.5 text-xs text-sand-400 hidden sm:block">Няравын санхүүгийн ажлын орчин</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="hidden items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[.06] px-3 py-1.5 text-[10px] font-bold tracking-[.12em] text-emerald-200 sm:inline-flex">
               <ShieldCheck className="h-3.5 w-3.5" />
-              PERIOD OPEN
+              ҮЕ НЭЭЛТТЭЙ
             </span>
             <div className="flex items-center gap-2 rounded-xl px-2 py-1.5">
               <span className="grid h-8 w-8 place-items-center rounded-full border border-[#d3a84b]/40 bg-[#2a1e0d] text-[10px] font-bold text-[#e6c46e]">
