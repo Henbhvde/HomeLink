@@ -479,6 +479,26 @@ html[data-theme='light'] .guided-tour-panel {
   filter: invert(0.9) hue-rotate(180deg);
 }
 
+html[data-theme='light'] .confirm-dialog-root {
+  background: rgba(52, 47, 40, 0.38) !important;
+}
+
+html[data-theme='light'] .confirm-dialog-panel {
+  border-color: rgba(180, 67, 50, 0.22) !important;
+  background: #f7f2e9 !important;
+  color: #25251f !important;
+  box-shadow: 0 28px 80px rgba(68, 57, 44, 0.2) !important;
+}
+
+html[data-theme='light'] .confirm-dialog-panel .text-sand-400,
+html[data-theme='light'] .confirm-dialog-panel .text-sand-200 {
+  color: #6f685e !important;
+}
+
+html[data-theme='light'] .confirm-dialog-panel .text-red-200 {
+  color: #9f322b !important;
+}
+
 html[data-theme='light'] .auth-modal-panel {
   border-color: rgba(49, 93, 73, 0.2) !important;
   background: #f6f1e8 !important;

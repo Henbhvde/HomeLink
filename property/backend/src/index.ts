@@ -1220,7 +1220,11 @@ app.get('/api/resident-memberships/tenants', requireAuth, async (req, res) => {
 });
 
 app.get('/api/resident-memberships/tenants/:id/units', requireAuth, async (req, res) => {
-  const units = await prisma.unit.findMany({ where: { tenantId: getTenantId(req), status: { not: 'inactive' } }, select: { id: true, number: true, floor: { select: { number: true, entrance: { select: { name: true, building: { select: { name: true } } } } } }, _count: { select: { residentProfiles: { where: { status: 'active' } } } } }, orderBy: { number: 'asc' } });
+  const requestedTenantId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  if (!requestedTenantId) return sendError(res, 400, 'СӨХ-ийн мэдээлэл дутуу байна.');
+  const tenant = await prisma.tenant.findFirst({ where: { id: requestedTenantId, status: { in: ['active', 'trial'] } }, select: { id: true } });
+  if (!tenant) return sendError(res, 404, 'СӨХ олдсонгүй.');
+  const units = await prisma.unit.findMany({ where: { tenantId: tenant.id, status: { not: 'inactive' } }, select: { id: true, number: true, floor: { select: { number: true, entrance: { select: { name: true, building: { select: { name: true } } } } } }, _count: { select: { residentProfiles: { where: { status: 'active' } } } } }, orderBy: { number: 'asc' } });
   return sendSuccess(res, 'Workspace units retrieved.', units.map((unit) => ({ id: unit.id, number: unit.number, floor: unit.floor.number, entrance: unit.floor.entrance.name, building: unit.floor.entrance.building.name, hasActiveResident: unit._count.residentProfiles > 0 })));
 });
 
