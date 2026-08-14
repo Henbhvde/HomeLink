@@ -76,6 +76,13 @@ export default function ResidentsPage() {
   const [membershipRequests, setMembershipRequests] = useState<MembershipRequest[]>([]);
   const [unitOptions, setUnitOptions] = useState<UnitOption[]>([]);
 
+  useEffect(() => {
+    if (!isPersonDialogOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [isPersonDialogOpen]);
+
   const loadMembershipRequests = () => {
     if (!token) return;
     void fetch(`${apiBaseUrl}/resident-memberships/requests`, { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((payload) => setMembershipRequests(payload.data ?? [])).catch(() => setMembershipRequests([]));
@@ -330,7 +337,21 @@ export default function ResidentsPage() {
         </Card>
 
         {isPersonDialogOpen && (
-          <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-5 backdrop-blur-sm"><div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#171614] p-6 shadow-2xl"><div className="flex items-start justify-between"><div><p className="text-[10px] font-bold tracking-[.18em] text-sand">NEW PERSON</p><h2 className="mt-2 font-serif text-2xl text-cream">{activeType} нэмэх</h2></div><button type="button" onClick={closePersonDialog} className="text-sand-400 transition hover:text-cream" aria-label="Хаах"><X className="h-5 w-5" /></button></div><div className="mt-6 space-y-4"><label className="block text-xs font-semibold text-sand-200">Бүтэн нэр<Input value={personDraft.name} onChange={(event) => setPersonDraft((current) => ({ ...current, name: event.target.value }))} className="mt-2" placeholder="Бат-Эрдэнэ" /></label><label className="block text-xs font-semibold text-sand-200">Утас<Input value={personDraft.phone} onChange={(event) => setPersonDraft((current) => ({ ...current, phone: event.target.value }))} className="mt-2" placeholder="9911-2233" /></label><label className="block text-xs font-semibold text-sand-200">И-мэйл<Input type="email" value={personDraft.email} onChange={(event) => setPersonDraft((current) => ({ ...current, email: event.target.value }))} className="mt-2" placeholder="name@email.mn" /></label><label className="block text-xs font-semibold text-sand-200">Айл / үүрэг<Input value={personDraft.apartment} onChange={(event) => setPersonDraft((current) => ({ ...current, apartment: event.target.value }))} className="mt-2" placeholder={activeType === 'Ажилтан' ? 'Менежер' : 'A-1203'} /></label></div><div className="mt-7 flex justify-end gap-3"><Button variant="ghost" onClick={closePersonDialog}>Болих</Button><Button disabled={!personDraft.name.trim()} loading={isSavingPerson} onClick={savePerson}>Хадгалах</Button></div></div></div>
+          <div className="fixed inset-0 z-50 grid place-items-center overflow-hidden bg-black/75 p-3 backdrop-blur-sm sm:p-4">
+            <div className="max-h-[90vh] w-full max-w-[540px] overflow-y-auto rounded-2xl border border-white/10 bg-[#171614] p-4 shadow-2xl sm:p-5">
+              <div className="flex items-start justify-between">
+                <div><p className="text-[10px] font-bold tracking-[.18em] text-sand">NEW PERSON</p><h2 className="mt-1 font-serif text-2xl text-cream">{activeType} нэмэх</h2></div>
+                <button type="button" onClick={closePersonDialog} className="text-sand-400 transition hover:text-cream" aria-label="Хаах"><X className="h-5 w-5" /></button>
+              </div>
+              <div className="mt-4 space-y-3">
+                <label className="block text-xs font-semibold text-sand-200">Бүтэн нэр<Input value={personDraft.name} onChange={(event) => setPersonDraft((current) => ({ ...current, name: event.target.value }))} className="mt-1.5 h-10" placeholder="Бат-Эрдэнэ" /></label>
+                <label className="block text-xs font-semibold text-sand-200">Утас<Input value={personDraft.phone} onChange={(event) => setPersonDraft((current) => ({ ...current, phone: event.target.value }))} className="mt-1.5 h-10" placeholder="9911-2233" /></label>
+                <label className="block text-xs font-semibold text-sand-200">И-мэйл<Input type="email" value={personDraft.email} onChange={(event) => setPersonDraft((current) => ({ ...current, email: event.target.value }))} className="mt-1.5 h-10" placeholder="name@email.mn" /></label>
+                <label className="block text-xs font-semibold text-sand-200">Айл / үүрэг<Input value={personDraft.apartment} onChange={(event) => setPersonDraft((current) => ({ ...current, apartment: event.target.value }))} className="mt-1.5 h-10" placeholder={activeType === 'Ажилтан' ? 'Менежер' : 'A-1203'} /></label>
+              </div>
+              <div className="mt-5 flex justify-end gap-3"><Button variant="ghost" onClick={closePersonDialog}>Болих</Button><Button disabled={!personDraft.name.trim()} loading={isSavingPerson} onClick={savePerson}>Хадгалах</Button></div>
+            </div>
+          </div>
         )}
 
         {isImportOpen && (
