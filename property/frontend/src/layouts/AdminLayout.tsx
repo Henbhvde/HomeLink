@@ -4,6 +4,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
+import type { Workspace } from '../types/auth';
 
 type ManagerNotification = {
   id: string;
@@ -33,7 +34,7 @@ function notificationIcon(tone: ManagerNotification['tone']) {
 }
 
 export default function AdminLayout() {
-  const { user, token, logout } = useAuth();
+  const { user, token, login, logout } = useAuth();
   const userInitial = Array.from((user?.fullName ?? '').trim())[0]?.toLocaleUpperCase('mn-MN') ?? 'Х';
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -43,6 +44,13 @@ export default function AdminLayout() {
   const [notifications, setNotifications] = useState<ManagerNotification[]>([]);
   const [notificationFilter, setNotificationFilter] = useState<'all' | 'unread' | 'read'>('all');
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(user?.workspace ? [user.workspace] : []);
+  const [workspaceError, setWorkspaceError] = useState('');
+  const [isWorkspaceBusy, setIsWorkspaceBusy] = useState(false);
+
+  const workspaceName = user?.workspace?.name ?? 'Workspace';
+  const workspaceInitials = workspaceName.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => Array.from(part)[0]).join('').toLocaleUpperCase('mn-MN') || 'WS';
 
   useEffect(() => {
     if (!token) return;
@@ -54,14 +62,31 @@ export default function AdminLayout() {
       }).catch(() => setNotifications([]));
   }, [token]);
   useEffect(() => {
+    if (!token) return;
+    void fetch(`${apiBaseUrl}/manager/workspaces`, { credentials: 'include', headers: { Authorization: `Bearer ${token}` } })
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload?.message ?? 'Workspace жагсаалт авахад алдаа гарлаа.');
+        setWorkspaces(Array.isArray(payload?.data) ? payload.data : []);
+      })
+      .catch(() => setWorkspaces(user?.workspace ? [user.workspace] : []));
+  }, [token, user?.workspace]);
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsMobileOpen(false);
+        setIsHelpOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+  useEffect(() => {
+    if (!isHelpOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [isHelpOpen]);
   useEffect(() => {
     const handleLiveNotification = (event: Event) => {
       const detail = (event as CustomEvent<Record<string, unknown>>).detail;
@@ -85,6 +110,37 @@ export default function AdminLayout() {
   const signOut = () => {
     logout();
     navigate('/');
+  };
+
+  const createWorkspace = async () => {
+    const name = window.prompt('Шинэ workspace-ийн нэрийг оруулна уу:');
+    if (!name?.trim() || !token) return;
+    setWorkspaceError('');
+    setIsWorkspaceBusy(true);
+    try {
+      const response = await fetch(`${apiBaseUrl}/manager/workspaces`, { method: 'POST', credentials: 'include', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name.trim() }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload?.message ?? 'Workspace үүсгэж чадсангүй.');
+      login(payload.data.user, payload.data.token);
+      setIsWorkspaceOpen(false);
+      navigate('/manager');
+    } catch (error) { setWorkspaceError(error instanceof Error ? error.message : 'Workspace үүсгэж чадсангүй.'); }
+    finally { setIsWorkspaceBusy(false); }
+  };
+
+  const switchWorkspace = async (workspace: Workspace) => {
+    if (!token || workspace.id === user?.workspace?.id) { setIsWorkspaceOpen(false); return; }
+    setWorkspaceError('');
+    setIsWorkspaceBusy(true);
+    try {
+      const response = await fetch(`${apiBaseUrl}/manager/workspaces/${encodeURIComponent(workspace.id)}/switch`, { method: 'POST', credentials: 'include', headers: { Authorization: `Bearer ${token}` } });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload?.message ?? 'Workspace сольж чадсангүй.');
+      login(payload.data.user, payload.data.token);
+      setIsWorkspaceOpen(false);
+      navigate('/manager');
+    } catch (error) { setWorkspaceError(error instanceof Error ? error.message : 'Workspace сольж чадсангүй.'); }
+    finally { setIsWorkspaceBusy(false); }
   };
 
   const markAllNotificationsRead = () => {
@@ -117,12 +173,12 @@ export default function AdminLayout() {
 
       <div className="relative mt-8 lg:mt-7">
         <button onClick={() => setIsWorkspaceOpen((open) => !open)} className="group flex w-full items-center gap-3 rounded-xl border border-white/8 bg-white/[.035] px-3 py-3 text-left transition-colors hover:border-sand/25 hover:bg-sand/[.07] lg:justify-center lg:px-0" aria-label="Workspace солих">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-sand/20 bg-sand/15 text-xs font-bold text-sand">ER</span>
-          <span className="min-w-0 flex-1 lg:hidden"><b className="block truncate text-xs text-cream">Evergreen Residence</b><small className="block text-[9px] text-sand-400">Manager workspace</small></span>
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-sand/20 bg-sand/15 text-xs font-bold text-sand">{workspaceInitials}</span>
+          <span className="min-w-0 flex-1 lg:hidden"><b className="block truncate text-xs text-cream">{workspaceName}</b><small className="block text-[9px] text-sand-400">Manager workspace</small></span>
           <ChevronsUpDown className="h-4 w-4 text-sand-400 lg:hidden" />
-          <span className="pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-sand/20 bg-[#3a3734] px-2.5 py-1.5 text-[10px] font-bold text-sand-100 opacity-0 shadow-xl transition group-hover:opacity-100 lg:block">Evergreen Residence</span>
+          <span className="pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-sand/20 bg-[#3a3734] px-2.5 py-1.5 text-[10px] font-bold text-sand-100 opacity-0 shadow-xl transition group-hover:opacity-100 lg:block">{workspaceName}</span>
         </button>
-        {isWorkspaceOpen && <div className="absolute z-30 mt-2 w-full rounded-xl border border-sand/20 bg-[#3a3734] p-2 shadow-2xl lg:left-[calc(100%+12px)] lg:top-0 lg:mt-0 lg:w-64"><button className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-xs text-cream hover:bg-white/7"><span className="grid h-6 w-6 place-items-center rounded-md bg-sand/15 text-[9px] text-sand">ER</span>Evergreen Residence</button><button className="mt-1 w-full rounded-lg border border-dashed border-white/10 px-2.5 py-2 text-left text-xs text-sand-300 hover:bg-white/7">+ Шинэ workspace</button></div>}
+        {isWorkspaceOpen && <div className="absolute z-30 mt-2 w-full rounded-xl border border-sand/20 bg-[#3a3734] p-2 shadow-2xl lg:left-[calc(100%+12px)] lg:top-0 lg:mt-0 lg:w-64">{workspaces.map((workspace) => <button key={workspace.id} type="button" disabled={isWorkspaceBusy} onClick={() => void switchWorkspace(workspace)} className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-xs text-cream hover:bg-white/7 disabled:opacity-50"><span className="grid h-6 w-6 place-items-center rounded-md bg-sand/15 text-[9px] text-sand">{workspace.name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => Array.from(part)[0]).join('').toLocaleUpperCase('mn-MN')}</span><span className="truncate">{workspace.name}</span>{workspace.id === user?.workspace?.id && <span className="ml-auto text-sand">✓</span>}</button>)}{user?.role === 'manager' && <button type="button" disabled={isWorkspaceBusy} onClick={() => void createWorkspace()} className="mt-1 w-full rounded-lg border border-dashed border-white/10 px-2.5 py-2 text-left text-xs text-sand-300 hover:bg-white/7 disabled:opacity-50">{isWorkspaceBusy ? 'Түр хүлээнэ үү...' : '+ Шинэ workspace'}</button>}{workspaceError && <p className="px-2.5 pt-2 text-[10px] text-red-200">{workspaceError}</p>}</div>}
       </div>
 
       <nav className="mt-7 space-y-1">
@@ -135,7 +191,7 @@ export default function AdminLayout() {
 
       <div className="mt-auto space-y-1 border-t border-sand/15 pt-4">
         <NavLink to="/manager/settings" aria-label="Тохиргоо" onClick={() => setIsMobileOpen(false)} className={({ isActive }) => `group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors lg:justify-center lg:px-0 ${isActive ? 'border border-sand/20 bg-sand/[.12] text-sand' : 'text-sand-400 hover:bg-white/5 hover:text-cream'}`}><Settings className="h-4 w-4" /><span className="lg:hidden">Тохиргоо</span><span className="pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-sand/20 bg-[#3a3734] px-2.5 py-1.5 text-[10px] font-bold text-sand-100 opacity-0 shadow-xl transition group-hover:opacity-100 lg:block">Тохиргоо</span></NavLink>
-        <button type="button" aria-label="Тусламж" className="group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-semibold text-sand-400 transition-colors hover:bg-white/5 hover:text-cream lg:justify-center lg:px-0"><CircleHelp className="h-4 w-4" /><span className="lg:hidden">Тусламж</span><span className="pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-sand/20 bg-[#3a3734] px-2.5 py-1.5 text-[10px] font-bold text-sand-100 opacity-0 shadow-xl transition group-hover:opacity-100 lg:block">Тусламж</span></button>
+        <button type="button" onClick={() => { setIsHelpOpen(true); setIsMobileOpen(false); }} aria-label="Тусламж" className="group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-semibold text-sand-400 transition-colors hover:bg-white/5 hover:text-cream lg:justify-center lg:px-0"><CircleHelp className="h-4 w-4" /><span className="lg:hidden">Тусламж</span><span className="pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-sand/20 bg-[#3a3734] px-2.5 py-1.5 text-[10px] font-bold text-sand-100 opacity-0 shadow-xl transition group-hover:opacity-100 lg:block">Тусламж</span></button>
       </div>
     </aside>
   );
@@ -237,6 +293,26 @@ export default function AdminLayout() {
         <main className="mx-auto max-w-[1460px] p-4 sm:p-5 lg:p-6"><Outlet /></main>
       </div>
       <ConfirmDialog open={isClearConfirmOpen} title="Мэдэгдлүүдийг цэвэрлэх үү?" description="Бүх мэдэгдэл энэ жагсаалтаас бүр мөсөн устна." confirmLabel="Цэвэрлэх" onCancel={() => setIsClearConfirmOpen(false)} onConfirm={() => { clearNotifications(); setIsClearConfirmOpen(false); }} />
+      {isHelpOpen && (
+        <div className="fixed inset-0 z-[115] grid place-items-center bg-black/65 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="help-title" onClick={() => setIsHelpOpen(false)}>
+          <section className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-sand/25 bg-[#2b2926] p-5 shadow-2xl sm:p-6" onClick={(event) => event.stopPropagation()}>
+            <div className="flex items-start justify-between gap-4">
+              <div><p className="text-[10px] font-bold tracking-[.18em] text-sand">ТУСЛАМЖИЙН ТӨВ</p><h2 id="help-title" className="mt-2 font-serif text-2xl text-cream">HomeLink ашиглах заавар</h2><p className="mt-2 text-xs leading-5 text-sand-400">Үндсэн үйлдлүүдийн товч тайлбарыг эндээс харна уу.</p></div>
+              <button type="button" onClick={() => setIsHelpOpen(false)} aria-label="Тусламж хаах" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-sand-400 hover:bg-white/5 hover:text-cream"><X className="h-4 w-4" /></button>
+            </div>
+            <div className="mt-5 space-y-2">
+              {[
+                ['Оршин суугч урих', 'Оршин суугчид хэсгээс шинэ хэрэглэгчийн мэдээллийг оруулж урилга илгээнэ.'],
+                ['Төлбөр, нэхэмжлэл', 'Төлбөр хэсэгт сарын нэхэмжлэл үүсгэж, төлөлтийн төлөвийг хянана.'],
+                ['Тоолуурын заалт', 'Тоолуур хэсэгт шинэ заалт оруулж, зөрүүтэй мэдээллийг шалгана.'],
+                ['Засварын хүсэлт', 'Засвар үйлчилгээ хэсэгт хүсэлтийг ажилтанд оноож, төлөвийг шинэчилнэ.'],
+                ['Тайлан гаргах', 'Тайлан хэсгээс хугацаагаа сонгоод Excel татах эсвэл тайлан үүсгэнэ.'],
+              ].map(([title, description]) => <div key={title} className="rounded-xl border border-sand/15 bg-white/[.035] px-4 py-3"><b className="text-xs text-cream">{title}</b><p className="mt-1 text-[11px] leading-5 text-sand-400">{description}</p></div>)}
+            </div>
+            <div className="mt-5 flex justify-end"><button type="button" onClick={() => setIsHelpOpen(false)} className="rounded-xl border border-sand/25 px-4 py-2 text-xs font-semibold text-sand hover:bg-sand/[.08]">Хаах</button></div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

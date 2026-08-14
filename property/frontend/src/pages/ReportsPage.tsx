@@ -25,6 +25,13 @@ const formatMetricValue = (metric: { value: number; isPercent?: boolean; isCount
 
 const formatChange = (value: number) => (value >= 0 ? `+${value}%` : `${value}%`);
 
+const escapeHtml = (value: unknown) => String(value ?? '')
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#039;');
+
 export default function ReportsPage() {
   const { token } = useAuth();
   const [period, setPeriod] = useState<keyof typeof periodMap>('6 сар');
@@ -40,6 +47,54 @@ export default function ReportsPage() {
   const revenueMix = stats?.revenueMix ?? [];
   const metrics = stats?.metrics ?? [];
 
+  const generateReport = () => {
+    if (!stats) return;
+
+    const reportWindow = window.open('', '_blank', 'width=900,height=700');
+    if (!reportWindow) {
+      window.alert('Тайлан нээхийн тулд popup зөвшөөрнө үү.');
+      return;
+    }
+
+    reportWindow.opener = null;
+    const metricRows = metrics.map((metric: { label: string; value: number; change: number; isPercent?: boolean; isCount?: boolean }) => `
+      <tr>
+        <td>${escapeHtml(metric.label)}</td>
+        <td>${escapeHtml(formatMetricValue(metric))}</td>
+        <td>${escapeHtml(formatChange(metric.change))}</td>
+      </tr>
+    `).join('');
+
+    reportWindow.document.write(`<!doctype html>
+      <html lang="mn">
+        <head>
+          <meta charset="utf-8" />
+          <title>HomeLink тайлан — ${escapeHtml(period)}</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #25251f; margin: 40px; }
+            h1 { margin: 0 0 8px; font-size: 28px; }
+            p { color: #6f685e; margin: 0 0 24px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 12px; border: 1px solid #d8d0c4; text-align: left; }
+            th { background: #f4efe7; }
+            small { display: block; margin-top: 24px; color: #777; }
+            @media print { body { margin: 20mm; } }
+          </style>
+        </head>
+        <body>
+          <h1>Тайлан, шинжилгээ</h1>
+          <p>Хугацаа: ${escapeHtml(period)}</p>
+          <table>
+            <thead><tr><th>Үзүүлэлт</th><th>Утга</th><th>Өмнөх үеэс</th></tr></thead>
+            <tbody>${metricRows}</tbody>
+          </table>
+          <small>Үүсгэсэн огноо: ${escapeHtml(new Date().toLocaleString('mn-MN'))}</small>
+          <script>window.addEventListener('load', () => window.print());<\/script>
+        </body>
+      </html>`);
+    reportWindow.document.close();
+  };
+
   return (
     <section>
       <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -50,7 +105,7 @@ export default function ReportsPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline"><ArrowDownToLine className="h-4 w-4" />Excel татах</Button>
-          <Button><FileText className="h-4 w-4" />Тайлан үүсгэх</Button>
+          <Button disabled={isLoading || !stats} onClick={generateReport}><FileText className="h-4 w-4" />Тайлан үүсгэх</Button>
         </div>
       </div>
 

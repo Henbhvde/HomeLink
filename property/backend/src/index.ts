@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
+import { z } from 'zod';
 import { createHash, randomInt, randomUUID } from 'node:crypto';
 import { createDataStore } from './dataStore.js';
 import { getDomainPrismaAdapter } from './domainPrismaCrud.js';
@@ -1664,6 +1665,64 @@ app.get('/api/platform/requests', ...requireSuperAdmin, (_req, res) => {
     'Pending workspace requests retrieved successfully.',
     tenants.filter((tenant) => tenant.status === 'pending').map(toTenantSummary),
   );
+});
+
+app.get('/api/manager/workspaces', requireAuth, async (_req, res) => {
+  const auth = res.locals.auth as AuthTokenPayload;
+  if (!['manager', 'accountant', 'staff'].includes(auth.role)) return sendError(res, 403, 'Workspace access is not available.');
+  try {
+    if (auth.tenantId) {
+      await prisma.workspaceMembership.upsert({
+        where: { userId_tenantId: { userId: auth.sub, tenantId: auth.tenantId } },
+        create: { userId: auth.sub, tenantId: auth.tenantId, role: auth.role },
+        update: { role: auth.role },
+      });
+    }
+    const memberships = await prisma.workspaceMembership.findMany({
+      where: { userId: auth.sub },
+      include: { tenant: { select: { id: true, name: true, slug: true, status: true } } },
+      orderBy: { createdAt: 'asc' },
+    });
+    return sendSuccess(res, 'Workspaces retrieved successfully.', memberships.map(({ tenant }) => tenant));
+  } catch { return sendError(res, 500, 'Unable to retrieve workspaces.'); }
+});
+
+app.post('/api/manager/workspaces', requireAuth, async (req, res) => {
+  const auth = res.locals.auth as AuthTokenPayload;
+  if (auth.role !== 'manager') return sendError(res, 403, 'Only managers can create a workspace.');
+  const parsed = z.object({ name: z.string().trim().min(2).max(120) }).safeParse(req.body);
+  if (!parsed.success) return sendError(res, 400, 'Workspace name must contain at least 2 characters.');
+  try {
+    const slugBase = parsed.data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'workspace';
+    const result = await prisma.$transaction(async (tx) => {
+      if (auth.tenantId) await tx.workspaceMembership.upsert({
+        where: { userId_tenantId: { userId: auth.sub, tenantId: auth.tenantId } },
+        create: { userId: auth.sub, tenantId: auth.tenantId, role: 'manager' },
+        update: {},
+      });
+      const tenant = await tx.tenant.create({ data: { name: parsed.data.name, slug: `${slugBase}-${randomUUID().slice(0, 8)}`, status: 'active' } });
+      await tx.workspaceMembership.create({ data: { userId: auth.sub, tenantId: tenant.id, role: 'manager' } });
+      const user = await tx.user.update({ where: { id: auth.sub }, data: { tenantId: tenant.id }, include: { tenant: { select: { id: true, name: true, slug: true } } } });
+      return { tenant, user };
+    });
+    tenants.push({ id: result.tenant.id, name: result.tenant.name, contactName: auth.email, contactEmail: auth.email, location: '', plan: 'Start', status: 'active', unitCount: 0, monthlyPrice: planPrices.Start, createdAt: result.tenant.createdAt.toISOString().slice(0, 10) });
+    await persistTenants();
+    return sendSession(res, 'Workspace created successfully.', result.user, 201);
+  } catch { return sendError(res, 500, 'Unable to create workspace.'); }
+});
+
+app.post('/api/manager/workspaces/:id/switch', requireAuth, async (req, res) => {
+  const auth = res.locals.auth as AuthTokenPayload;
+  const workspaceId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  try {
+    const membership = await prisma.workspaceMembership.findUnique({
+      where: { userId_tenantId: { userId: auth.sub, tenantId: workspaceId } },
+    });
+    const workspace = membership ? await prisma.tenant.findUnique({ where: { id: workspaceId }, select: { status: true } }) : null;
+    if (!membership || !workspace || !['active', 'trial'].includes(workspace.status)) return sendError(res, 403, 'You do not have access to this workspace.');
+    const user = await prisma.user.update({ where: { id: auth.sub }, data: { tenantId: workspaceId, role: membership.role }, include: { tenant: { select: { id: true, name: true, slug: true } } } });
+    return sendSession(res, 'Workspace switched successfully.', user);
+  } catch { return sendError(res, 500, 'Unable to switch workspace.'); }
 });
 
 app.post('/api/platform/requests', requireAuth, async (req, res) => {

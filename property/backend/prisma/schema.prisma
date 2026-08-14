@@ -12,7 +12,8 @@ model Tenant {
   name             String
   slug             String            @unique
   status           TenantAccessStatus @default(active)
-  users            User[]
+    users            User[]
+    workspaceMemberships WorkspaceMembership[]
   subscription     Subscription?
   buildings        Building[]
   units            Unit[]
@@ -628,7 +629,8 @@ model User {
   emailVerifiedAt DateTime?
   role         UserRole @default(unassigned)
   tenantId     String?
-  tenant       Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+    tenant       Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+    workspaceMemberships WorkspaceMembership[]
   residentProfiles ResidentProfile[]
   meterReadings   MeterReading[]
   assignedWorkOrders WorkOrder[]
@@ -654,6 +656,19 @@ model User {
   @@index([tenantId])
   @@index([role])
   @@unique([oauthProvider, oauthSubject])
+}
+
+model WorkspaceMembership {
+  id        String   @id @default(cuid())
+  userId    String
+  tenantId  String
+  role      UserRole @default(manager)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, tenantId])
+  @@index([tenantId])
 }
 
 model RefreshToken {
