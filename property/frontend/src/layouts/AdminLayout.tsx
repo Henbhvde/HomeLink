@@ -21,8 +21,6 @@ const navigation = [
   { label: 'Хяналтын самбар', icon: LayoutDashboard, to: '/manager' },
   { label: 'Барилга, байр', icon: Building2, to: '/manager/buildings' },
   { label: 'Оршин суугчид', icon: Users, to: '/manager/residents' },
-  { label: 'Төлбөр, нэхэмжлэл', icon: Wallet, to: '/manager/billing' },
-  { label: 'Гүйлгээ', icon: CreditCard, to: '/manager/payments' },
   { label: 'Тоолуурын заалт', icon: Zap, to: '/manager/meters' },
   { label: 'Засвар үйлчилгээ', icon: Wrench, to: '/manager/maintenance' },
   { label: 'Тайлан, баримт', icon: FileText, to: '/manager/reports' },

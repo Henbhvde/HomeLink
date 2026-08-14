@@ -7,8 +7,8 @@ import { prisma } from './prisma.js';
 type Role = AuthTokenPayload['role'];
 export const defaultPermissions: Record<string, Role[]> = {
   'manager-buildings': ['manager'], 'manager-residents': ['manager'], 'meter-readings': ['manager', 'accountant'],
-  'billing-invoices': ['manager', 'accountant'], 'billing-run': ['manager', 'accountant'],
-  'payment-statements': ['manager', 'accountant'], 'payment-records': ['manager', 'accountant'],
+  'billing-invoices': ['accountant'], 'billing-run': ['accountant'],
+  'payment-statements': ['accountant'], 'payment-records': ['accountant'],
   'expense-records': ['accountant'], 'maintenance-requests': ['manager'], 'maintenance-announcements': ['manager'],
   'manager-settings': ['manager'], 'accountant-period': ['accountant'], 'staff-work-orders': ['staff'],
   'resident-portal-notices': ['resident'], 'resident-portal-tickets': ['resident'],
