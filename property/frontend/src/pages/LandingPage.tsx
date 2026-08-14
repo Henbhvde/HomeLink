@@ -33,16 +33,13 @@ import SpotlightCard from '../components/ui/SpotlightCard';
 import TiltedCard from '../components/ui/TiltedCard';
 import ShinyText from '../components/ui/ShinyText';
 import BlurText from '../components/ui/BlurText';
-import { useAuth } from '../contexts/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getPostLoginPath } from '../services/authApi';
 import AuthModal from '../components/ui/AuthModal';
 import { useTheme } from '../contexts/ThemeContext';
 
 
 export default function LandingPage() {
   const { theme, toggleTheme } = useTheme();
-  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthRoute = location.pathname === '/login' || location.pathname === '/signup';
@@ -131,29 +128,20 @@ export default function LandingPage() {
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          {isAuthenticated ? (
+          <div className="flex items-center gap-4">
             <button 
-              onClick={() => user && navigate(getPostLoginPath(user.role))}
-              className="px-5 py-2 bg-sand text-onyx font-bold rounded-full text-xs transition-all flex items-center gap-1.5 shadow-md shadow-sand/15 hover:bg-cream"
+              onClick={() => openAuthModal('login')} 
+              className="text-xs font-semibold text-sand-300 hover:text-cream transition-colors uppercase tracking-wider pr-1"
             >
-              Хяналтын самбар <ArrowUpRight className="w-3.5 h-3.5" />
+              Нэвтрэх
             </button>
-          ) : (
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={() => openAuthModal('login')} 
-                className="text-xs font-semibold text-sand-300 hover:text-cream transition-colors uppercase tracking-wider pr-1"
-              >
-                Нэвтрэх
-              </button>
-              <button 
-                onClick={() => navigate('/soh/register')} 
-                className="px-5 py-2 border border-sand/30 hover:border-sand bg-sand/5 hover:bg-sand/15 rounded-full text-xs font-semibold text-cream transition-all flex items-center gap-1.5"
-              >
-                СӨХ бүртгүүлэх <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
+            <button 
+              onClick={() => navigate('/soh/register')} 
+              className="px-5 py-2 border border-sand/30 hover:border-sand bg-sand/5 hover:bg-sand/15 rounded-full text-xs font-semibold text-cream transition-all flex items-center gap-1.5"
+            >
+              СӨХ бүртгүүлэх <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -169,29 +157,20 @@ export default function LandingPage() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-30 pt-24 bg-onyx/98 backdrop-blur-xl flex flex-col p-8 gap-6 lg:hidden border-b border-white/5">
           <div className="flex flex-col gap-3 mt-6">
-            {isAuthenticated ? (
+            <>
               <button 
-                onClick={() => { setIsMobileMenuOpen(false); if (user) navigate(getPostLoginPath(user.role)); }}
+                onClick={() => { setIsMobileMenuOpen(false); openAuthModal('login'); }} 
+                className="w-full text-center py-3 border border-sand/30 hover:border-sand text-cream font-bold rounded-full text-sm"
+              >
+                Нэвтрэх
+              </button>
+              <button 
+                onClick={() => { setIsMobileMenuOpen(false); navigate('/soh/register'); }} 
                 className="w-full text-center py-3 bg-sand text-onyx font-bold rounded-full text-sm"
               >
-                Хяналтын самбар
+                СӨХ бүртгүүлэх
               </button>
-            ) : (
-              <>
-                <button 
-                  onClick={() => { setIsMobileMenuOpen(false); openAuthModal('login'); }} 
-                  className="w-full text-center py-3 border border-sand/30 hover:border-sand text-cream font-bold rounded-full text-sm"
-                >
-                  Нэвтрэх
-                </button>
-                <button 
-                  onClick={() => { setIsMobileMenuOpen(false); navigate('/soh/register'); }} 
-                  className="w-full text-center py-3 bg-sand text-onyx font-bold rounded-full text-sm"
-                >
-                  СӨХ бүртгүүлэх
-                </button>
-              </>
-            )}
+            </>
           </div>
         </div>
       )}
@@ -223,10 +202,10 @@ export default function LandingPage() {
 
               <div className="flex flex-wrap gap-4 mb-14">
                 <button 
-                  onClick={() => navigate(isAuthenticated && user ? getPostLoginPath(user.role, 'soh') : '/soh/register')}
+                  onClick={() => navigate('/soh/register')}
                   className="px-6 py-3.5 bg-sand hover:bg-cream text-onyx font-bold rounded-full flex items-center gap-2 transition-all shadow-md shadow-sand/10 text-sm"
                 >
-                  {isAuthenticated ? 'Хяналтын самбар' : 'СӨХ бүртгүүлэх'} <ArrowRight className="w-4 h-4" />
+                  СӨХ бүртгүүлэх <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
 
@@ -657,10 +636,10 @@ export default function LandingPage() {
             
             <div className="flex flex-wrap items-center gap-4 shrink-0">
               <button 
-                onClick={() => navigate(isAuthenticated && user ? getPostLoginPath(user.role, 'soh') : '/soh/register')}
+                onClick={() => navigate('/soh/register')}
                 className="px-6 py-3.5 border border-sand/60 hover:border-sand bg-sand hover:bg-cream text-onyx font-bold rounded-full transition-all text-sm shadow-md shadow-sand/10"
               >
-                {isAuthenticated ? 'Хяналтын самбар руу шилжих' : 'СӨХ бүртгүүлэх'}
+                СӨХ бүртгүүлэх
               </button>
             </div>
           </div>
