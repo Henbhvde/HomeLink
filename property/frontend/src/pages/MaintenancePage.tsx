@@ -140,6 +140,17 @@ export default function MaintenancePage() {
   const [visibleReaders, setVisibleReaders] = useState<string | null>(null);
   const [requestAttachment, setRequestAttachment] = useState<string>('');
 
+  useEffect(() => {
+    if (!isAnnouncementOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isAnnouncementOpen]);
+
   const { data: maintenanceStats } = useQuery({
     queryKey: ['maintenance-stats', token],
     queryFn: () => apiClient.getMaintenanceStats(token || ''),
@@ -488,31 +499,31 @@ export default function MaintenancePage() {
         </div>
       ), document.body)}
 
-      {isAnnouncementOpen && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Зарлал илгээх">
-          <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-[#171614] p-6 shadow-2xl">
+      {isAnnouncementOpen && createPortal((
+        <div className="announcement-modal-root fixed inset-0 z-50 grid place-items-center overflow-hidden bg-black/75 p-3 backdrop-blur-sm sm:p-4" role="dialog" aria-modal="true" aria-label="Зарлал илгээх">
+          <div className="announcement-modal-panel max-h-[90vh] w-full max-w-[540px] overflow-y-auto rounded-2xl border border-white/10 bg-[#171614] p-4 shadow-2xl sm:p-5">
             <div className="flex justify-between gap-4">
               <div>
                 <p className="text-[10px] font-bold tracking-[.18em] text-sand">TARGETED ANNOUNCEMENT</p>
-                <h2 className="mt-2 font-serif text-2xl text-cream">Зарлал илгээх</h2>
+                <h2 className="mt-1 font-serif text-2xl text-cream">Зарлал илгээх</h2>
               </div>
               <button onClick={() => setIsAnnouncementOpen(false)} className="text-sand-400 hover:text-cream" aria-label="Хаах"><X className="h-5 w-5" /></button>
             </div>
-            <div className="mt-6 space-y-4">
-              <label className="block text-xs font-semibold text-sand-200">Гарчиг<Input value={announcementTitle} onChange={(event) => setAnnouncementTitle(event.target.value)} className="mt-2" placeholder="Жишээ: Ус түр хаах тухай" /></label>
-              <label className="block text-xs font-semibold text-sand-200">Мэдээлэл<textarea value={announcementContent} onChange={(event) => setAnnouncementContent(event.target.value)} rows={4} className="mt-2 w-full resize-none rounded-xl border border-white/10 bg-black/20 px-3.5 py-3 text-sm text-cream outline-none placeholder:text-sand-500 focus:border-sand/55 focus:ring-2 focus:ring-sand/10" placeholder="Маргааш 10:00–14:00 цагт ус хаана..." /></label>
-              <div className="grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 space-y-3">
+              <label className="block text-xs font-semibold text-sand-200">Гарчиг<Input value={announcementTitle} onChange={(event) => setAnnouncementTitle(event.target.value)} className="mt-1.5 h-10" placeholder="Жишээ: Ус түр хаах тухай" /></label>
+              <label className="block text-xs font-semibold text-sand-200">Мэдээлэл<textarea value={announcementContent} onChange={(event) => setAnnouncementContent(event.target.value)} rows={3} className="mt-1.5 w-full resize-none rounded-xl border border-white/10 bg-black/20 px-3.5 py-2 text-sm text-cream outline-none placeholder:text-sand-500 focus:border-sand/55 focus:ring-2 focus:ring-sand/10" placeholder="Маргааш 10:00–14:00 цагт ус хаана..." /></label>
+              <div className="grid gap-3 sm:grid-cols-2">
                 <label className="block text-xs font-semibold text-sand-200">Хүлээн авагч
-                  <div className="relative"><select value={announcementAudience} onChange={(event) => setAnnouncementAudience(event.target.value)} className={selectClassName}><option>B орц</option><option>A орц</option><option>C орц</option></select><ChevronDown className="pointer-events-none absolute right-3 top-5 h-4 w-4 text-sand-500" /></div>
+                  <div className="relative"><select value={announcementAudience} onChange={(event) => setAnnouncementAudience(event.target.value)} className={selectClassName.replace('mt-2 h-11', 'mt-1.5 h-10')}><option>B орц</option><option>A орц</option><option>C орц</option></select><ChevronDown className="pointer-events-none absolute right-3 top-4 h-4 w-4 text-sand-500" /></div>
                 </label>
-                <label className="block text-xs font-semibold text-sand-200">Илгээх хугацаа<Input value={announcementTime} onChange={(event) => setAnnouncementTime(event.target.value)} className="mt-2" placeholder="Маргааш, 10:00" /></label>
+                <label className="block text-xs font-semibold text-sand-200">Илгээх хугацаа<Input value={announcementTime} onChange={(event) => setAnnouncementTime(event.target.value)} className="mt-1.5 h-10" placeholder="Маргааш, 10:00" /></label>
               </div>
-              <div className="flex gap-2 rounded-xl border border-sand/15 bg-sand/5 p-3 text-[11px] leading-relaxed text-sand-300"><Eye className="mt-0.5 h-4 w-4 shrink-0 text-sand" />Илгэсний дараа тухайн орцны оршин суугчдын уншсан төлөвийг харах боломжтой.</div>
+              <div className="flex gap-2 rounded-xl border border-sand/15 bg-sand/5 p-2.5 text-[11px] leading-relaxed text-sand-300"><Eye className="mt-0.5 h-4 w-4 shrink-0 text-sand" />Илгэсний дараа тухайн орцны оршин суугчдын уншсан төлөвийг харах боломжтой.</div>
             </div>
-            <div className="mt-7 flex justify-end gap-3"><Button variant="ghost" onClick={() => setIsAnnouncementOpen(false)}>Болих</Button><Button disabled={!announcementTitle.trim() || !announcementContent.trim()} loading={isSendingAnnouncement} onClick={publishAnnouncement}><Send className="h-4 w-4" />{announcementAudience} руу илгээх</Button></div>
+            <div className="mt-5 flex justify-end gap-3"><Button variant="ghost" onClick={() => setIsAnnouncementOpen(false)}>Болих</Button><Button disabled={!announcementTitle.trim() || !announcementContent.trim()} loading={isSendingAnnouncement} onClick={publishAnnouncement}><Send className="h-4 w-4" />{announcementAudience} руу илгээх</Button></div>
           </div>
         </div>
-      )}
+      ), document.body)}
       </section>
     </PageStateWrapper>
   );

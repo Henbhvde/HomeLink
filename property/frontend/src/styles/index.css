@@ -495,6 +495,14 @@ html[data-theme='light'] .request-control-modal-panel {
   filter: invert(0.9) hue-rotate(180deg);
 }
 
+html[data-theme='light'] .announcement-modal-root {
+  background: rgba(42, 45, 40, 0.42) !important;
+}
+
+html[data-theme='light'] .announcement-modal-panel {
+  filter: invert(0.9) hue-rotate(180deg);
+}
+
 html[data-theme='light'] .confirm-dialog-root {
   background: rgba(52, 47, 40, 0.38) !important;
 }
