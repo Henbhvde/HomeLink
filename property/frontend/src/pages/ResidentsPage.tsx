@@ -168,13 +168,15 @@ export default function ResidentsPage() {
     if (activeType === 'Ажилтан' && !personDraft.email.trim()) { setNotice('Ажилтны Gmail хаягийг оруулна уу.'); return; }
     setIsSavingPerson(true);
     try {
+      let createdInviteId: string | null = null;
       if (activeType === 'Ажилтан') {
         const response = await fetch(`${apiBaseUrl}/invites`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ email: personDraft.email.trim(), ...(personDraft.phone.trim() ? { phone: personDraft.phone.trim() } : {}), role: 'staff' }) });
         const payload = await response.json().catch(() => null);
         if (!response.ok) throw new Error(payload?.message ?? 'Урилга илгээж чадсангүй.');
+        createdInviteId = payload?.data?.id ? String(payload.data.id) : null;
       }
       const person: Person = {
-        id: `local-${Date.now()}`,
+        id: createdInviteId ?? `local-${Date.now()}`,
         name: personDraft.name.trim(),
         phone: personDraft.phone.trim() || '—',
         email: personDraft.email.trim() || '—',
@@ -197,8 +199,11 @@ export default function ResidentsPage() {
     if (!token || deletingInviteId) return;
     setDeletingInviteId(person.id);
     try {
-      const response = await fetch(`${apiBaseUrl}/invites/${encodeURIComponent(person.email)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
-      if (!response.ok) throw new Error('Урилгыг устгаж чадсангүй.');
+      const isLocalOnly = person.id.startsWith('local-') || person.id.startsWith('import-');
+      if (!isLocalOnly) {
+        const response = await fetch(`${apiBaseUrl}/invites/${encodeURIComponent(person.id)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+        if (!response.ok) throw new Error('Урилгыг устгаж чадсангүй.');
+      }
       setPeople((current) => current.filter((item) => item.id !== person.id));
       setNotice('Урилга устгагдлаа.');
     } catch (error) {
