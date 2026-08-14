@@ -142,8 +142,9 @@ function getTrialEndDate(days: number) {
   return new Intl.DateTimeFormat('en-CA').format(date);
 }
 
-function getInitials(value: string) {
-  return value.split(' ').map((item) => item[0]).join('').slice(0, 2).toUpperCase();
+function getInitials(value?: string | null) {
+  if (!value?.trim()) return '—';
+  return value.trim().split(/\s+/).map((item) => item[0]).join('').slice(0, 2).toUpperCase();
 }
 
 function getStoredList<T>(key: string, fallback: T[]) {
