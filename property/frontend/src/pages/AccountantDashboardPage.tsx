@@ -109,9 +109,9 @@ export default function AccountantDashboardPage() {
           <h1 className="mt-2 font-serif text-[2rem] font-light leading-[1.05] text-[#f6efdf] sm:text-[2.35rem] lg:text-[2.7rem]">Няравын санхүүгийн хяналтын төв.</h1>
           <p className="mt-3 max-w-2xl text-[13px] leading-7 text-[#a99d82] sm:text-sm">Заалт, нэхэмжлэл, банкны тулгалт, зарлага болон сарын хаалтыг нэг урсгалаар удирдана.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#d7ad55]/25 bg-[#c89e43]/[.08] px-3 py-2 text-[10px] font-bold tracking-[.13em] text-[#eccb7b]"><span className="h-1.5 w-1.5 rounded-full bg-[#f2c65d] shadow-[0_0_10px_#f2c65d]" />САР ҮРГЭЛЖИЛЖ БАЙНА</span>
-          <Badge tone={locked ? 'neutral' : 'success'}>{locked ? 'ҮЕ ХААЛТТАЙ' : 'ҮЕ НЭЭЛТТЭЙ'}</Badge>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[#d7ad55]/25 bg-[#c89e43]/[.08] px-2.5 py-1.5 text-[9px] font-bold tracking-[.08em] text-[#eccb7b]"><span className="h-1.5 w-1.5 rounded-full bg-[#f2c65d] shadow-[0_0_10px_#f2c65d]" />САР ҮРГЭЛЖИЛЖ БАЙНА</span>
+            <Badge className="whitespace-nowrap px-2 py-1 text-[10px]" tone={locked ? 'neutral' : 'success'}>{locked ? 'ҮЕ ХААЛТТАЙ' : 'ҮЕ НЭЭЛТТЭЙ'}</Badge>
         </div>
       </div>
 
