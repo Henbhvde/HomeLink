@@ -338,8 +338,8 @@ export default function ResidentsPage() {
         </Card>
 
         {isPersonDialogOpen && createPortal((
-          <div className="fixed inset-0 z-50 grid place-items-center overflow-hidden bg-black/75 p-3 backdrop-blur-sm sm:p-4">
-            <div className="max-h-[90vh] w-full max-w-[540px] overflow-y-auto rounded-2xl border border-white/10 bg-[#171614] p-4 shadow-2xl sm:p-5">
+          <div className="resident-person-modal-root fixed inset-0 z-50 grid place-items-center overflow-hidden bg-black/75 p-3 backdrop-blur-sm sm:p-4">
+            <div className="resident-person-modal-panel max-h-[90vh] w-full max-w-[540px] overflow-y-auto rounded-2xl border border-white/10 bg-[#171614] p-4 shadow-2xl sm:p-5">
               <div className="flex items-start justify-between">
                 <div><p className="text-[10px] font-bold tracking-[.18em] text-sand">NEW PERSON</p><h2 className="mt-1 font-serif text-2xl text-cream">{activeType} нэмэх</h2></div>
                 <button type="button" onClick={closePersonDialog} className="text-sand-400 transition hover:text-cream" aria-label="Хаах"><X className="h-5 w-5" /></button>

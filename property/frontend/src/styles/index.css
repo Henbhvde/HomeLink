@@ -499,6 +499,39 @@ html[data-theme='light'] .confirm-dialog-panel .text-red-200 {
   color: #9f322b !important;
 }
 
+html[data-theme='light'] .resident-person-modal-root {
+  background: rgba(52, 47, 40, 0.38) !important;
+}
+
+html[data-theme='light'] .resident-person-modal-panel {
+  border-color: rgba(92, 78, 57, 0.2) !important;
+  background: #f3eee6 !important;
+  color: #25251f !important;
+  box-shadow: 0 28px 80px rgba(68, 57, 44, 0.2) !important;
+}
+
+html[data-theme='light'] .resident-person-modal-panel .text-cream {
+  color: #25251f !important;
+}
+
+html[data-theme='light'] .resident-person-modal-panel .text-sand-200 {
+  color: #3f3a32 !important;
+}
+
+html[data-theme='light'] .resident-person-modal-panel .text-sand-400 {
+  color: #746a5b !important;
+}
+
+html[data-theme='light'] .resident-person-modal-panel input {
+  border-color: rgba(92, 78, 57, 0.2) !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+  color: #25251f !important;
+}
+
+html[data-theme='light'] .resident-person-modal-panel input::placeholder {
+  color: #8a7c68 !important;
+}
+
 html[data-theme='light'] .auth-modal-panel {
   border-color: rgba(49, 93, 73, 0.2) !important;
   background: #f6f1e8 !important;
