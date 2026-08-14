@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useBackendState } from '../hooks/useBackendState';
 import { useAuth } from '../contexts/AuthContext';
@@ -115,6 +116,17 @@ export default function MaintenancePage() {
   const [requestAssignee, setRequestAssignee] = useState('Оноогоогүй');
   const [requestStatus, setRequestStatus] = useState<RequestStatus>('Шинэ');
   const [requestDescription, setRequestDescription] = useState('');
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [editor]);
   const [requestResponse, setRequestResponse] = useState('');
   const [completionReport, setCompletionReport] = useState('');
   const [completionCost, setCompletionCost] = useState('');
@@ -411,36 +423,36 @@ export default function MaintenancePage() {
         </Card>
       </div>
 
-      {editor && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Засварын хүсэлт үүсгэх">
-          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-white/10 bg-[#171614] p-6 shadow-2xl">
+      {editor && createPortal((
+        <div className="maintenance-task-modal-root fixed inset-0 z-50 grid place-items-center overflow-hidden bg-black/75 p-3 backdrop-blur-sm sm:p-4" role="dialog" aria-modal="true" aria-label="Засварын хүсэлт үүсгэх">
+          <div className="maintenance-task-modal-panel max-h-[90vh] w-full max-w-[540px] overflow-y-auto rounded-2xl border border-white/10 bg-[#171614] p-4 shadow-2xl sm:p-5">
             <div className="flex justify-between gap-4">
               <div>
                 <p className="text-[10px] font-bold tracking-[.18em] text-sand">{editor === 'common' ? 'COMMON AREA ISSUE' : 'NEW REQUEST'}</p>
-                <h2 className="mt-2 font-serif text-2xl text-cream">{editor === 'common' ? 'Ажлын даалгавар үүсгэх' : 'Засварын хүсэлт'}</h2>
+                <h2 className="mt-1 font-serif text-2xl text-cream">{editor === 'common' ? 'Ажлын даалгавар үүсгэх' : 'Засварын хүсэлт'}</h2>
               </div>
               <button onClick={closeRequestEditor} className="text-sand-400 hover:text-cream" aria-label="Хаах"><X className="h-5 w-5" /></button>
             </div>
-            {editor === 'common' && <div className="mt-5 flex gap-2 rounded-xl border border-sand/15 bg-sand/5 p-3 text-[11px] leading-relaxed text-sand-300"><CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-sand" />Лифт, орц, шугам зэрэг нийтийн талбайн асуудал нь айлд биш нийтэд хамаарна.</div>}
-            <div className="mt-6 space-y-4">
-              <label className="block text-xs font-semibold text-sand-200">Гарчиг<Input value={requestTitle} onChange={(event) => setRequestTitle(event.target.value)} className="mt-2" placeholder="Асуудлыг товч бичнэ үү" /></label>
-              <label className="block text-xs font-semibold text-sand-200">Байршил<Input value={requestLocation} onChange={(event) => setRequestLocation(event.target.value)} className="mt-2" placeholder="B орц · Лифт" /></label>
-              <label className="block text-xs font-semibold text-sand-200">Тайлбар<textarea value={requestDescription} onChange={(event) => setRequestDescription(event.target.value)} rows={3} className={selectClassName.replace('h-11', 'h-auto py-3')} placeholder="Асуудал, хийх ажлыг дэлгэрэнгүй бичнэ үү" /></label>
-              <div className="grid gap-4 sm:grid-cols-2">
+            {editor === 'common' && <div className="mt-3 flex gap-2 rounded-xl border border-sand/15 bg-sand/5 p-2.5 text-[11px] leading-relaxed text-sand-300"><CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-sand" />Лифт, орц, шугам зэрэг нийтийн талбайн асуудал нь айлд биш нийтэд хамаарна.</div>}
+            <div className="mt-4 space-y-3">
+              <label className="block text-xs font-semibold text-sand-200">Гарчиг<Input value={requestTitle} onChange={(event) => setRequestTitle(event.target.value)} className="mt-1.5 h-10" placeholder="Асуудлыг товч бичнэ үү" /></label>
+              <label className="block text-xs font-semibold text-sand-200">Байршил<Input value={requestLocation} onChange={(event) => setRequestLocation(event.target.value)} className="mt-1.5 h-10" placeholder="B орц · Лифт" /></label>
+              <label className="block text-xs font-semibold text-sand-200">Тайлбар<textarea value={requestDescription} onChange={(event) => setRequestDescription(event.target.value)} rows={2} className={selectClassName.replace('mt-2 h-11', 'mt-1.5 h-auto py-2')} placeholder="Асуудал, хийх ажлыг дэлгэрэнгүй бичнэ үү" /></label>
+              <div className="grid gap-3 sm:grid-cols-2">
                 <label className="block text-xs font-semibold text-sand-200">Хариуцагч
-                  <div className="relative"><select value={requestAssignee} onChange={(event) => setRequestAssignee(event.target.value)} className={selectClassName}>{assignees.map((assignee) => <option key={assignee} value={assignee}>{assignee}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-5 h-4 w-4 text-sand-500" /></div>
+                  <div className="relative"><select value={requestAssignee} onChange={(event) => setRequestAssignee(event.target.value)} className={selectClassName.replace('mt-2 h-11', 'mt-1.5 h-10')}>{assignees.map((assignee) => <option key={assignee} value={assignee}>{assignee}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-4 h-4 w-4 text-sand-500" /></div>
                 </label>
                 <label className="block text-xs font-semibold text-sand-200">Яаралтай зэрэг
-                  <div className="relative"><select value={requestPriority} onChange={(event) => setRequestPriority(event.target.value as Priority)} className={selectClassName}>{(['Бага', 'Дунд', 'Өндөр', 'Яаралтай'] as Priority[]).map((priority) => <option key={priority} value={priority}>{priority}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-5 h-4 w-4 text-sand-500" /></div>
+                  <div className="relative"><select value={requestPriority} onChange={(event) => setRequestPriority(event.target.value as Priority)} className={selectClassName.replace('mt-2 h-11', 'mt-1.5 h-10')}>{(['Бага', 'Дунд', 'Өндөр', 'Яаралтай'] as Priority[]).map((priority) => <option key={priority} value={priority}>{priority}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-4 h-4 w-4 text-sand-500" /></div>
                 </label>
               </div>
-              <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-sand/25 p-3 text-xs text-sand-300"><input type="file" accept="image/*" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setRequestAttachment(String(reader.result)); reader.readAsDataURL(file); }} /><ImagePlus className="h-5 w-5 text-sand" /><span>{requestAttachment ? 'Хавсралт бэлэн' : 'Зураг хавсаргах'}</span></label>
-              {requestAttachment && <img src={requestAttachment} alt="Хавсралтын урьдчилсан харагдац" decoding="async" className="h-32 w-full rounded-xl object-cover" />}
+              <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-sand/25 p-2.5 text-xs text-sand-300"><input type="file" accept="image/*" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setRequestAttachment(String(reader.result)); reader.readAsDataURL(file); }} /><ImagePlus className="h-5 w-5 text-sand" /><span>{requestAttachment ? 'Хавсралт бэлэн' : 'Зураг хавсаргах'}</span></label>
+              {requestAttachment && <img src={requestAttachment} alt="Хавсралтын урьдчилсан харагдац" decoding="async" className="h-24 w-full rounded-xl object-cover" />}
             </div>
-            <div className="mt-7 flex justify-end gap-3"><Button variant="ghost" onClick={closeRequestEditor}>Болих</Button><Button disabled={!requestTitle.trim() || !requestLocation.trim()} loading={isSaving} onClick={createRequest}>{editor === 'common' ? 'Даалгавар үүсгэх' : 'Хүсэлт илгээх'}</Button></div>
+            <div className="mt-5 flex justify-end gap-3"><Button variant="ghost" onClick={closeRequestEditor}>Болих</Button><Button disabled={!requestTitle.trim() || !requestLocation.trim()} loading={isSaving} onClick={createRequest}>{editor === 'common' ? 'Даалгавар үүсгэх' : 'Хүсэлт илгээх'}</Button></div>
           </div>
         </div>
-      )}
+      ), document.body)}
 
       {selectedRequest && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Хүсэлт удирдах">
