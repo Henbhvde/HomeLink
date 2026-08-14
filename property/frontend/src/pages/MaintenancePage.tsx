@@ -243,7 +243,7 @@ export default function MaintenancePage() {
   return (
     <PageStateWrapper
       status={status}
-      isEmpty={requests.length === 0}
+      isEmpty={requests.length === 0 && editor === null}
       onRetry={retry}
       emptyIcon={Wrench}
       emptyTitle="Одоогоор ирсэн засварын хүсэлт алга"
