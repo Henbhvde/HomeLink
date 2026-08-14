@@ -107,22 +107,6 @@ const tenantsStorageKey = 'homelink-platform-tenants';
 const requestsStorageKey = 'homelink-platform-requests';
 const approvedRequestsStorageKey = 'homelink-platform-approved-requests';
 
-// Fallback data - used when platform tenants API is not available
-const initialTenants: Tenant[] = [
-  { id: 'evergreen', name: 'Evergreen Residence', location: 'ХУД, Улаанбаатар', unitCount: 436, plan: 'Growth', status: 'active', createdAt: '2026-03-10' },
-  { id: 'blue-sky', name: 'Blue Sky Residence', location: 'БЗД, Улаанбаатар', unitCount: 920, plan: 'Enterprise', status: 'active', createdAt: '2026-02-22' },
-  { id: 'river-garden', name: 'River Garden', location: 'ХУД, Улаанбаатар', unitCount: 280, plan: 'Growth', status: 'trial', trialEndsAt: '2026-08-07', createdAt: '2026-07-18' },
-  { id: 'park-view', name: 'Park View', location: 'СБД, Улаанбаатар', unitCount: 72, plan: 'Start', status: 'overdue', createdAt: '2026-01-06' },
-  { id: 'khurkhree', name: 'Хүрхрээ хотхон', location: 'БГД, Улаанбаатар', unitCount: 196, plan: 'Growth', status: 'read_only', createdAt: '2025-12-19' },
-];
-
-// Fallback data - used when platform requests API is not available
-const initialRequests: ApprovalRequest[] = [
-  { id: 'request-1', workspaceName: 'Цэнгэлдэх хотхон', contactName: 'Д. Энхжин', location: 'ХУД, Улаанбаатар', unitCount: 312, requestedPlan: 'Growth', submittedAt: 'Өнөөдөр, 09:42' },
-  { id: 'request-2', workspaceName: 'Нарлаг өргөө СӨХ', contactName: 'Б. Тэмүүлэн', location: 'БЗД, Улаанбаатар', unitCount: 148, requestedPlan: 'Start', submittedAt: 'Өчигдөр, 16:10' },
-  { id: 'request-3', workspaceName: 'Khunnu 2222 Residence', contactName: 'С. Марал', location: 'ХУД, Улаанбаатар', unitCount: 504, requestedPlan: 'Enterprise', submittedAt: '07.22' },
-];
-
 const statusCopy: Record<TenantStatus, { label: string; tone: 'success' | 'warning' | 'danger' | 'info' }> = {
   active: { label: 'Идэвхтэй', tone: 'success' },
   trial: { label: 'Туршилт', tone: 'info' },
@@ -198,8 +182,8 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
   const currentDay = currentDate.getDate();
   const calendarCells = getCalendarCells(currentYear, currentMonth);
   const monthLabel = `${currentYear} оны ${currentMonth + 1} дугаар сар`;
-  const [tenants, setTenants] = useState<Tenant[]>(() => getStoredList(tenantsStorageKey, initialTenants));
-  const [requests, setRequests] = useState<ApprovalRequest[]>(() => getStoredList(requestsStorageKey, initialRequests));
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [requests, setRequests] = useState<ApprovalRequest[]>([]);
   const [approvedRequests, setApprovedRequests] = useState<ApprovedRequest[]>(() => getStoredList(approvedRequestsStorageKey, []));
   const [notice, setNotice] = useState<string | null>(null);
   const [query, setQuery] = useUrlQueryState<string>('q', '');
