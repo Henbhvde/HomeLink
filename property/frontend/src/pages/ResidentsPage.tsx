@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Building2, CheckCircle2, FileSpreadsheet, Filter, Search, Send, Trash2, Upload, UserPlus, Users, X } from 'lucide-react';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
@@ -336,7 +337,7 @@ export default function ResidentsPage() {
           </CardContent>
         </Card>
 
-        {isPersonDialogOpen && (
+        {isPersonDialogOpen && createPortal((
           <div className="fixed inset-0 z-50 grid place-items-center overflow-hidden bg-black/75 p-3 backdrop-blur-sm sm:p-4">
             <div className="max-h-[90vh] w-full max-w-[540px] overflow-y-auto rounded-2xl border border-white/10 bg-[#171614] p-4 shadow-2xl sm:p-5">
               <div className="flex items-start justify-between">
@@ -352,7 +353,7 @@ export default function ResidentsPage() {
               <div className="mt-5 flex justify-end gap-3"><Button variant="ghost" onClick={closePersonDialog}>Болих</Button><Button disabled={!personDraft.name.trim()} loading={isSavingPerson} onClick={savePerson}>Хадгалах</Button></div>
             </div>
           </div>
-        )}
+        ), document.body)}
 
         {isImportOpen && (
           <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-5 backdrop-blur-sm">
