@@ -532,6 +532,12 @@ html[data-theme='light'] .resident-person-modal-panel input::placeholder {
   color: #8a7c68 !important;
 }
 
+.billing-date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(48%) sepia(68%) saturate(1015%) hue-rotate(332deg) brightness(92%) contrast(88%);
+  opacity: 1;
+}
+
 html[data-theme='light'] .auth-modal-panel {
   border-color: rgba(49, 93, 73, 0.2) !important;
   background: #f6f1e8 !important;
