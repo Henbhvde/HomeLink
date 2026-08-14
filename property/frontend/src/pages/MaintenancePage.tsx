@@ -369,7 +369,7 @@ export default function MaintenancePage() {
         </Card>
       </div>
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-[1.25fr_.75fr]">
+      <div className="mt-5 grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
         <Card>
           <CardContent className="p-0">
             <div className="flex items-center justify-between border-b border-white/7 p-5">
