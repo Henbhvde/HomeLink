@@ -25,7 +25,6 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import platformOfficeBackground from '../assets/platform-office-background.svg';
 import Badge from '../components/ui/Badge';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { useAuth } from '../contexts/AuthContext';
@@ -481,9 +480,8 @@ export default function SuperAdminPage({ view = 'overview' }: { view?: View }) {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden text-[#161616]">
-      <div className="fixed inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${platformOfficeBackground})` }} />
-      <div className="fixed inset-0 bg-[#f7f5f0]/35 backdrop-blur-[1px]" />
+    <section className="relative min-h-screen overflow-hidden bg-[#f4efe7] text-[#25251f]">
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(255,252,246,.95),transparent_34%),radial-gradient(circle_at_82%_22%,rgba(82,116,95,.16),transparent_30%),linear-gradient(135deg,#f8f3eb_0%,#eee4d6_56%,#e2d3bf_100%)]" />
       {notice && <div className="fixed right-5 top-5 z-[70] flex max-w-md items-start gap-3 rounded-2xl border border-emerald-900/15 bg-white/85 px-4 py-3 text-sm text-emerald-900 shadow-2xl backdrop-blur-xl"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /><span className="flex-1">{notice}</span><button onClick={() => setNotice(null)} aria-label="Мэдэгдэл хаах"><X className="h-4 w-4" /></button></div>}
 
       <div className="relative mx-auto flex min-h-screen max-w-[1540px] items-center px-3 py-5 sm:px-6 lg:px-10 lg:py-10">
