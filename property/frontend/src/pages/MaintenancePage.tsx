@@ -159,8 +159,8 @@ export default function MaintenancePage() {
 
   const openRequestEditor = (type: Exclude<RequestEditor, null>) => {
     setEditor(type);
-    setRequestTitle(type === 'common' ? 'Лифт эвдэрсэн' : '');
-    setRequestLocation(type === 'common' ? 'B орц · Лифт' : '');
+    setRequestTitle('');
+    setRequestLocation('');
     setRequestPriority(type === 'common' ? 'Яаралтай' : 'Дунд');
     setRequestAssignee('Оноогоогүй');
     setRequestStatus('Шинэ');
@@ -435,7 +435,7 @@ export default function MaintenancePage() {
             </div>
             {editor === 'common' && <div className="mt-3 flex gap-2 rounded-xl border border-sand/15 bg-sand/5 p-2.5 text-[11px] leading-relaxed text-sand-300"><CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-sand" />Лифт, орц, шугам зэрэг нийтийн талбайн асуудал нь айлд биш нийтэд хамаарна.</div>}
             <div className="mt-4 space-y-3">
-              <label className="block text-xs font-semibold text-sand-200">Гарчиг<Input value={requestTitle} onChange={(event) => setRequestTitle(event.target.value)} className="mt-1.5 h-10" placeholder="Асуудлыг товч бичнэ үү" /></label>
+              <label className="block text-xs font-semibold text-sand-200">Гарчиг<Input value={requestTitle} onChange={(event) => setRequestTitle(event.target.value)} className="mt-1.5 h-10" placeholder={editor === 'common' ? 'Лифт эвдэрсэн' : 'Асуудлыг товч бичнэ үү'} /></label>
               <label className="block text-xs font-semibold text-sand-200">Байршил<Input value={requestLocation} onChange={(event) => setRequestLocation(event.target.value)} className="mt-1.5 h-10" placeholder="B орц · Лифт" /></label>
               <label className="block text-xs font-semibold text-sand-200">Тайлбар<textarea value={requestDescription} onChange={(event) => setRequestDescription(event.target.value)} rows={2} className={selectClassName.replace('mt-2 h-11', 'mt-1.5 h-auto py-2')} placeholder="Асуудал, хийх ажлыг дэлгэрэнгүй бичнэ үү" /></label>
               <div className="grid gap-3 sm:grid-cols-2">
