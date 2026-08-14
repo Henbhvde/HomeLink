@@ -118,13 +118,34 @@ export default function BillingPage() {
       if (!token || !user?.workspace?.id) throw new Error('СӨХ-ийн мэдээлэл олдсонгүй.');
       const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
       const units = billingUnits.filter((unit) => selectedUnitIds.includes(unit.id));
-      if (units.length === 0) throw new Error('Хамруулах айлаа сонгоно уу.');
+      const requestedHouseholdCount = Number.parseInt(householdCount, 10);
+      if (!Number.isFinite(requestedHouseholdCount) || requestedHouseholdCount <= 0) throw new Error('Хамрах айлын тоог зөв оруулна уу.');
       const amount = Number(chargeAmount);
       if (!chargeName.trim() || !Number.isFinite(amount) || amount <= 0) throw new Error('Төлбөрийн нэр, дүнг зөв оруулна уу.');
       const start = new Date(`${periodStart}T00:00:00`);
       const end = new Date(`${periodEnd}T23:59:59`);
       const dueAt = new Date(`${dueDate}T23:59:59`);
       if (start > end) throw new Error('Нэхэмжлэлийн хугацаа буруу байна.');
+      if (units.length === 0) {
+        const createdAtValue = Date.now();
+        const manualInvoices: Invoice[] = Array.from({ length: requestedHouseholdCount }, (_, index) => ({
+          id: `INV-${createdAtValue}-${index + 1}`,
+          unit: `Айл ${index + 1}`,
+          resident: 'Гараар оруулсан',
+          amount: formatMnt(amount),
+          due: dueDate,
+          status: 'draft',
+        }));
+        setInvoices((current) => [...manualInvoices, ...current]);
+        setCreatedInvoiceCount(requestedHouseholdCount);
+        setInvoiceRunCreated(true);
+        setRunStatus('complete');
+        setCreatedAt(`Өнөөдөр, ${new Date().toLocaleTimeString('mn-MN', { hour: '2-digit', minute: '2-digit' })}`);
+        setRunStage('draft');
+        setIsRunDialogOpen(false);
+        setTab('invoices');
+        return;
+      }
       const response = await fetch(`${apiBase}/invoices/generate`, {
         method: 'POST', headers,
         body: JSON.stringify({ periodStart: start.toISOString(), periodEnd: end.toISOString(), dueAt: dueAt.toISOString(), invoices: units.map((unit) => ({ unitId: unit.id, lines: [{ description: chargeName.trim(), quantity: 1, unitPrice: amount }] })) }),
@@ -288,7 +309,7 @@ export default function BillingPage() {
           <label className="block text-xs text-sand-300">Төлөх эцсийн огноо<Input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} className="mt-1" /></label>
           <div className="grid grid-cols-2 gap-3"><label className="text-xs text-sand-300">Төлбөрийн нэр<Input value={chargeName} onChange={(event) => setChargeName(event.target.value)} className="mt-1" /></label><label className="text-xs text-sand-300">Нэг айлын дүн<Input inputMode="numeric" placeholder="₮" value={chargeAmount} onChange={(event) => setChargeAmount(event.target.value.replace(/[^0-9]/g, ''))} className="mt-1" /></label></div>
           <label className="block text-xs text-sand-300">Хамрах айлын тоо<Input type="number" min="0" value={householdCount} onChange={(event) => { const value = event.target.value.replace(/[^0-9]/g, ''); setHouseholdCount(value); const count = Number.parseInt(value, 10) || 0; setSelectedUnitIds(billingUnits.slice(0, count).map((unit) => unit.id)); }} className="mt-1" /></label>
-        </div><div className="mt-7 flex justify-end gap-3"><Button variant="ghost" onClick={() => setIsRunDialogOpen(false)}>Болих</Button><Button disabled={unitsLoading || selectedUnitIds.length === 0 || !chargeAmount} onClick={createInvoiceRun}><FilePlus2 className="h-4 w-4" />Одоо үүсгэх</Button></div></>}
+        </div><div className="mt-7 flex justify-end gap-3"><Button variant="ghost" onClick={() => setIsRunDialogOpen(false)}>Болих</Button><Button disabled={unitsLoading || (Number.parseInt(householdCount, 10) || 0) <= 0 || !chargeAmount} onClick={createInvoiceRun} className="bg-[#c86745] text-white shadow-lg shadow-[#c86745]/20 hover:bg-[#ad5033]"><FilePlus2 className="h-4 w-4" />Үүсгэх</Button></div></>}
         {runStatus === 'creating' && <div className="py-12 text-center"><span className="mx-auto block h-9 w-9 animate-spin rounded-full border-2 border-sand border-t-transparent" /><p className="mt-5 font-semibold text-cream">Нэхэмжлэлүүдийг бэлтгэж байна...</p><p className="mt-2 text-xs text-sand-400">Тариф, тоолуур, алдангийн дүрмийг шалгаж байна.</p></div>}
         {runStatus === 'complete' && <div className="py-7 text-center"><span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-emerald-400/15 text-emerald-200"><CheckCircle2 className="h-6 w-6" /></span><p className="mt-4 font-semibold text-cream">{selectedUnitIds.length} айлын нэхэмжлэл үүслээ.</p><p className="mt-2 text-xs text-sand-400">{periodStart} — {periodEnd}</p><Button className="mt-7" onClick={() => setIsRunDialogOpen(false)}>Дуусгах</Button></div>}
       </div></div>, document.body)}
