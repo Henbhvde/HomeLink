@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Bell, Building2, ChevronDown, ChevronsUpDown, CircleHelp, CreditCard, FileText, LayoutDashboard, LogOut, Menu, Search, Settings, Sun, Moon, Users, Wallet, Wrench, X, Zap } from 'lucide-react';
+import { Bell, Building2, ChevronDown, ChevronsUpDown, CircleHelp, CreditCard, FileText, LayoutDashboard, LogOut, Menu, Search, Settings, Sun, Moon, Users, Wallet, Wrench, X } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -21,7 +21,6 @@ const navigation = [
   { label: 'Хяналтын самбар', icon: LayoutDashboard, to: '/manager' },
   { label: 'Барилга, байр', icon: Building2, to: '/manager/buildings' },
   { label: 'Оршин суугчид', icon: Users, to: '/manager/residents' },
-  { label: 'Тоолуурын заалт', icon: Zap, to: '/manager/meters' },
   { label: 'Засвар үйлчилгээ', icon: Wrench, to: '/manager/maintenance' },
   { label: 'Тайлан, баримт', icon: FileText, to: '/manager/reports' },
 ];

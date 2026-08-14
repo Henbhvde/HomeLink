@@ -74,7 +74,7 @@ function AppRoutes() {
         <Route path="residents" element={<LazyPage element={<ResidentsPage />} />} />
         <Route path="billing" element={<Navigate to="/manager" replace />} />
         <Route path="payments" element={<Navigate to="/manager" replace />} />
-        <Route path="meters" element={<LazyPage element={<MetersPage />} />} />
+        <Route path="meters" element={<Navigate to="/manager" replace />} />
         <Route path="maintenance" element={<LazyPage element={<MaintenancePage />} />} />
         <Route path="reports" element={<LazyPage element={<ReportsPage />} />} />
         <Route path="settings" element={<LazyPage element={<SettingsPage />} />} />
