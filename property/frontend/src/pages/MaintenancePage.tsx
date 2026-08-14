@@ -118,7 +118,7 @@ export default function MaintenancePage() {
   const [requestDescription, setRequestDescription] = useState('');
 
   useEffect(() => {
-    if (!editor) return;
+    if (!editor && !selectedRequest) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -126,7 +126,7 @@ export default function MaintenancePage() {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [editor]);
+  }, [editor, selectedRequest]);
   const [requestResponse, setRequestResponse] = useState('');
   const [completionReport, setCompletionReport] = useState('');
   const [completionCost, setCompletionCost] = useState('');
@@ -454,39 +454,39 @@ export default function MaintenancePage() {
         </div>
       ), document.body)}
 
-      {selectedRequest && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Хүсэлт удирдах">
-          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-white/10 bg-[#171614] p-6 shadow-2xl">
+      {selectedRequest && createPortal((
+        <div className="request-control-modal-root fixed inset-0 z-50 grid place-items-center overflow-hidden bg-black/75 p-3 backdrop-blur-sm sm:p-4" role="dialog" aria-modal="true" aria-label="Хүсэлт удирдах">
+          <div className="request-control-modal-panel max-h-[90vh] w-full max-w-[540px] overflow-y-auto rounded-2xl border border-white/10 bg-[#171614] p-4 shadow-2xl sm:p-5">
             <div className="flex justify-between gap-4">
               <div>
                 <p className="text-[10px] font-bold tracking-[.18em] text-sand">REQUEST CONTROL</p>
-                <h2 className="mt-2 font-serif text-2xl text-cream">Хүсэлт оноох</h2>
+                <h2 className="mt-1 font-serif text-2xl text-cream">Хүсэлт оноох</h2>
               </div>
               <button onClick={() => setSelectedRequest(null)} className="text-sand-400 hover:text-cream" aria-label="Хаах"><X className="h-5 w-5" /></button>
             </div>
-            <div className="mt-5 rounded-xl border border-white/8 bg-black/20 p-4"><b className="block text-sm text-cream">{selectedRequest.title}</b><p className="mt-1 text-[11px] text-sand-400">{selectedRequest.id} · {selectedRequest.unit} · {selectedRequest.resident}</p>{selectedRequest.description && <p className="mt-3 text-xs leading-relaxed text-sand-300">{selectedRequest.description}</p>}</div>
-            <div className="mt-4 flex items-center justify-between"><span className="text-[10px] font-bold tracking-wider text-sand-500">REQUEST TIMELINE</span><Badge tone={slaMeta(selectedRequest).tone}>{slaMeta(selectedRequest).label}</Badge></div>
-            <ol className="mt-3 space-y-2 border-l border-sand/25 pl-4 text-xs">{['Хүсэлт ирсэн', ...(selectedRequest.status !== 'Шинэ' ? ['Хүлээн авсан'] : []), ...(selectedRequest.status === 'Ажиллаж байгаа' || selectedRequest.status === 'Дууссан' ? ['Ажиллаж байгаа'] : []), ...(selectedRequest.status === 'Дууссан' ? ['Дууссан'] : [])].map((event, index) => <li key={event} className="relative text-sand-300"><span className="absolute -left-[19px] top-1 h-2 w-2 rounded-full bg-sand" />{event}<small className="ml-2 text-sand-500">{index === 0 ? selectedRequest.date : 'Явц шинэчлэгдсэн'}</small></li>)}</ol>
-            {selectedRequest.attachment && <div className="mt-4"><p className="mb-2 text-[10px] font-bold tracking-wider text-sand-500">ХАВСРАЛТ</p><img src={selectedRequest.attachment} alt="Хүсэлтийн хавсралт" loading="lazy" decoding="async" className="h-36 w-full rounded-xl object-cover" /></div>}
-            <div className="mt-6 space-y-4">
+            <div className="mt-3 rounded-xl border border-white/8 bg-black/20 p-3"><b className="block text-sm text-cream">{selectedRequest.title}</b><p className="mt-1 text-[11px] text-sand-400">{selectedRequest.id} · {selectedRequest.unit} · {selectedRequest.resident}</p>{selectedRequest.description && <p className="mt-2 text-xs leading-relaxed text-sand-300">{selectedRequest.description}</p>}</div>
+            <div className="mt-3 flex items-center justify-between gap-3"><span className="text-[10px] font-bold tracking-wider text-sand-500">REQUEST TIMELINE</span><Badge tone={slaMeta(selectedRequest).tone}>{slaMeta(selectedRequest).label}</Badge></div>
+            <ol className="mt-2 space-y-1.5 border-l border-sand/25 pl-4 text-xs">{['Хүсэлт ирсэн', ...(selectedRequest.status !== 'Шинэ' ? ['Хүлээн авсан'] : []), ...(selectedRequest.status === 'Ажиллаж байгаа' || selectedRequest.status === 'Дууссан' ? ['Ажиллаж байгаа'] : []), ...(selectedRequest.status === 'Дууссан' ? ['Дууссан'] : [])].map((event, index) => <li key={event} className="relative text-sand-300"><span className="absolute -left-[19px] top-1 h-2 w-2 rounded-full bg-sand" />{event}<small className="ml-2 text-sand-500">{index === 0 ? selectedRequest.date : 'Явц шинэчлэгдсэн'}</small></li>)}</ol>
+            {selectedRequest.attachment && <div className="mt-3"><p className="mb-1.5 text-[10px] font-bold tracking-wider text-sand-500">ХАВСРАЛТ</p><img src={selectedRequest.attachment} alt="Хүсэлтийн хавсралт" loading="lazy" decoding="async" className="h-24 w-full rounded-xl object-cover" /></div>}
+            <div className="mt-4 space-y-3">
               <label className="block text-xs font-semibold text-sand-200">Хариуцагч
-                <div className="relative"><select value={requestAssignee} onChange={(event) => setRequestAssignee(event.target.value)} className={selectClassName}>{assignees.map((assignee) => <option key={assignee} value={assignee}>{assignee}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-5 h-4 w-4 text-sand-500" /></div>
+                <div className="relative"><select value={requestAssignee} onChange={(event) => setRequestAssignee(event.target.value)} className={selectClassName.replace('mt-2 h-11', 'mt-1.5 h-10')}>{assignees.map((assignee) => <option key={assignee} value={assignee}>{assignee}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-4 h-4 w-4 text-sand-500" /></div>
               </label>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <label className="block text-xs font-semibold text-sand-200">Яаралтай зэрэг
-                  <div className="relative"><select value={requestPriority} onChange={(event) => setRequestPriority(event.target.value as Priority)} className={selectClassName}>{(['Бага', 'Дунд', 'Өндөр', 'Яаралтай'] as Priority[]).map((priority) => <option key={priority} value={priority}>{priority}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-5 h-4 w-4 text-sand-500" /></div>
+                  <div className="relative"><select value={requestPriority} onChange={(event) => setRequestPriority(event.target.value as Priority)} className={selectClassName.replace('mt-2 h-11', 'mt-1.5 h-10')}>{(['Бага', 'Дунд', 'Өндөр', 'Яаралтай'] as Priority[]).map((priority) => <option key={priority} value={priority}>{priority}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-4 h-4 w-4 text-sand-500" /></div>
                 </label>
                 <label className="block text-xs font-semibold text-sand-200">Төлөв
-                  <div className="relative"><select value={requestStatus} onChange={(event) => setRequestStatus(event.target.value as RequestStatus)} className={selectClassName}>{(['Шинэ', 'Хүлээн авсан', 'Ажиллаж байгаа', 'Дууссан'] as RequestStatus[]).map((status) => <option key={status} value={status}>{status}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-5 h-4 w-4 text-sand-500" /></div>
+                  <div className="relative"><select value={requestStatus} onChange={(event) => setRequestStatus(event.target.value as RequestStatus)} className={selectClassName.replace('mt-2 h-11', 'mt-1.5 h-10')}>{(['Шинэ', 'Хүлээн авсан', 'Ажиллаж байгаа', 'Дууссан'] as RequestStatus[]).map((status) => <option key={status} value={status}>{status}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3 top-4 h-4 w-4 text-sand-500" /></div>
                 </label>
               </div>
-              <label className="block text-xs font-semibold text-sand-200">Оршин суугчид өгөх хариу<textarea value={requestResponse} onChange={(event) => setRequestResponse(event.target.value)} rows={2} className={selectClassName.replace('h-11', 'h-auto py-3')} placeholder="Хүсэлтийн явц, шийдлийг бичнэ үү" /></label>
+              <label className="block text-xs font-semibold text-sand-200">Оршин суугчид өгөх хариу<textarea value={requestResponse} onChange={(event) => setRequestResponse(event.target.value)} rows={2} className={selectClassName.replace('mt-2 h-11', 'mt-1.5 h-auto py-2')} placeholder="Хүсэлтийн явц, шийдлийг бичнэ үү" /></label>
               {requestStatus === 'Дууссан' && <div className="space-y-4 rounded-xl border border-sand/15 bg-sand/5 p-4"><label className="block text-xs font-semibold text-sand-200">Дууссан ажлын тайлан<textarea value={completionReport} onChange={(event) => setCompletionReport(event.target.value)} rows={3} className={selectClassName.replace('h-11', 'h-auto py-3')} /></label><label className="block text-xs font-semibold text-sand-200">Зардал<Input type="number" min="0" value={completionCost} onChange={(event) => setCompletionCost(event.target.value)} className="mt-2" placeholder="0" /></label></div>}
             </div>
-            <div className="mt-7 flex justify-end gap-3"><Button variant="ghost" onClick={() => setSelectedRequest(null)}>Болих</Button><Button loading={isSaving} onClick={saveRequestManager}><ClipboardCheck className="h-4 w-4" />Оноолтыг хадгалах</Button></div>
+            <div className="mt-5 flex justify-end gap-3"><Button variant="ghost" onClick={() => setSelectedRequest(null)}>Болих</Button><Button loading={isSaving} onClick={saveRequestManager}><ClipboardCheck className="h-4 w-4" />Оноолтыг хадгалах</Button></div>
           </div>
         </div>
-      )}
+      ), document.body)}
 
       {isAnnouncementOpen && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Зарлал илгээх">
