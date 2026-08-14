@@ -424,12 +424,9 @@ export default function MaintenancePage() {
         <Card>
           <CardContent className="p-5">
             <p className="text-[10px] font-bold tracking-[.16em] text-sand">QUICK SEND</p>
-            <h2 className="mt-2 font-serif text-xl text-cream">B орцод зарлал илгээх</h2>
+            <h2 className="mt-2 font-serif text-xl text-cream">Зарлал илгээх</h2>
             <p className="mt-1 text-xs leading-relaxed text-sand-400">Ус, лифт, цэвэрлэгээний мэдээллийг зөвхөн хамаарах орц руу чиглүүлнэ.</p>
-            <div className="mt-5 rounded-xl border border-sand/15 bg-sand/5 p-4">
-              <div className="flex items-center gap-3"><span className="grid h-9 w-9 place-items-center rounded-lg bg-sand/10 text-sand"><UsersRound className="h-4 w-4" /></span><div><b className="block text-xs text-cream">B орц · 32 айл</b><span className="text-[10px] text-sand-400">Тусдаа зорилтот жагсаалт</span></div></div>
-            </div>
-            <Button className="mt-5 w-full" onClick={() => setIsAnnouncementOpen(true)}><Send className="h-4 w-4" />B орц руу зарлал бичих</Button>
+            <Button className="mt-5 w-full" onClick={() => setIsAnnouncementOpen(true)}><Send className="h-4 w-4" />Зарлал бичих</Button>
           </CardContent>
         </Card>
       </div>
