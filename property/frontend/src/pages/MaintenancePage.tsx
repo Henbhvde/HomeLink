@@ -98,10 +98,10 @@ function statusTone(value: RequestStatus) {
 }
 
 function slaMeta(request: MaintenanceRequest) {
-  if (request.status === 'Дууссан') return { label: 'SLA биелсэн', tone: 'success' as const };
-  if (request.priority === 'Яаралтай') return { label: 'SLA · 1 цаг', tone: 'danger' as const };
-  if (request.priority === 'Өндөр') return { label: 'SLA · 4 цаг', tone: 'warning' as const };
-  return { label: 'SLA · 24 цаг', tone: 'neutral' as const };
+  if (request.status === 'Дууссан') return { label: 'Хугацаандаа шийдсэн', tone: 'success' as const };
+  if (request.priority === 'Яаралтай') return { label: 'Шийдвэрлэх хугацаа · 1 цаг', tone: 'danger' as const };
+  if (request.priority === 'Өндөр') return { label: 'Шийдвэрлэх хугацаа · 4 цаг', tone: 'warning' as const };
+  return { label: 'Шийдвэрлэх хугацаа · 24 цаг', tone: 'neutral' as const };
 }
 
 export default function MaintenancePage() {
@@ -279,7 +279,7 @@ export default function MaintenancePage() {
         {[
           { label: 'Нээлттэй хүсэлт', value: String(maintenanceStats?.openCount ?? activeRequests.length), icon: Wrench, note: `${maintenanceStats?.urgentCount ?? urgentRequests.length} яаралтай` },
           { label: 'Дундаж шийдвэрлэлт', value: `${maintenanceStats?.avgResolutionHours ?? 0} цаг`, icon: CalendarClock, note: 'Энэ сард' },
-          { label: 'Дууссан ажил', value: String(maintenanceStats?.closedCount ?? requests.filter((request) => request.status === 'Дууссан').length), icon: CheckCircle2, note: `${maintenanceStats?.slaRate ?? 0}% SLA` },
+          { label: 'Дууссан ажил', value: String(maintenanceStats?.closedCount ?? requests.filter((request) => request.status === 'Дууссан').length), icon: CheckCircle2, note: `Хугацаандаа шийдсэн · ${maintenanceStats?.slaRate ?? 0}%` },
         ].map(({ label, value, icon: Icon, note }) => (
           <Card key={label}>
             <CardContent className="flex items-center justify-between p-5">
