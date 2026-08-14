@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Search } from 'lucide-react';
+import { ArrowLeft, Building2, Search } from 'lucide-react';
 import { getStoredToken } from '../services/authApi';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3001/api/v1';
@@ -186,6 +186,14 @@ export function ResidentJoinPage() {
   return (
     <main className="min-h-screen bg-[#f4efe7] px-5 py-16 text-[#25251f]">
       <section className="mx-auto max-w-4xl rounded-[36px] border border-[#ddd3c4] bg-[#fbf8f2] p-8 shadow-xl md:p-14">
+        <button
+          type="button"
+          onClick={() => navigate('/')}
+          className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#ddd3c4] px-4 py-2 text-sm font-semibold transition hover:border-[#52745f] hover:text-[#52745f]"
+          aria-label="Нүүр хуудас руу буцах"
+        >
+          <ArrowLeft size={18} /> Буцах
+        </button>
         <p className="mb-3 text-sm font-bold tracking-[0.2em] text-[#52745f]">ОРШИН СУУГЧААР НЭГДЭХ</p>
         <h1 className="mb-9 font-serif text-4xl md:text-5xl">Өөрийн СӨХ, тоотоо сонгоно уу</h1>
 
