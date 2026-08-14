@@ -48,7 +48,7 @@ export default function AccountantLayout() {
       <div className="mt-8 overflow-hidden rounded-2xl border border-[#c89e43]/24 bg-[linear-gradient(135deg,rgba(196,141,35,.17),rgba(20,17,10,.8))] p-3.5">
         <div className="flex items-center gap-2">
           <CalendarDays className="h-4 w-4 text-[#e4bd61]" />
-          <span className="text-[10px] font-bold tracking-[.14em] text-[#edcf8a]">2026 ОНЫ 7-Р САР</span>
+          <span className="text-[10px] font-bold tracking-[.14em] text-[#edcf8a]">2026 ОНЫ 8-Р САР</span>
         </div>
         <p className="mt-2 text-[11px] leading-4 text-[#c7b78e]">Сарын санхүүгийн мөчлөг нээлттэй</p>
         <div className="mt-3 h-1 overflow-hidden rounded-full bg-black/35">
